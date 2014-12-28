@@ -1,0 +1,434 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>cabanas.garcia.orienteering</groupId>
+  <artifactId>orienteering-parent</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <name>Orienteering App</name>
+  <description>Proyecto sobre el deporte de la orientación</description>
+  <licenses>
+      <license>
+          <name>Apache License 2.0</name>
+          <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+      </license>
+  </licenses>
+  <url>http://</url>
+  <repositories>
+      <repository>
+          <id>repository.jboss.org-public</id>
+          <name>JBoss repository</name>
+          <url>https://repository.jboss.org/nexus/content/groups/public</url>
+      </repository>
+  </repositories>
+  
+  <modules>
+  	<!-- <module>orienteering-maqueta</module> -->
+  	<module>orienteering-dtos</module>
+  	<module>orienteering-modelo</module>
+  	<!-- <module>orienteering-especificaciones</module> -->
+  	<module>orienteering-web-spring</module>
+  	<module>orienteering-repositorio-api</module>
+  	<module>orienteering-repositorio-impl</module>
+  	<module>orienteering-servicios-api</module>
+    <module>orienteering-servicios-impl</module>
+  </modules>
+  
+    <properties>    	
+    	<bonecp.version>0.7.1.RELEASE</bonecp.version>
+    			
+		<hsqldb.version>1.8.0.10</hsqldb.version>
+		<h2.version>1.3.172</h2.version>
+				
+		<slf4j.version>1.6.4</slf4j.version>
+		
+	    <spring.version>3.2.3.RELEASE</spring.version>
+	    
+	    <hibernate.version>4.1.4.Final</hibernate.version>
+	    <hibernate.validator.version>4.2.0.Final</hibernate.validator.version>
+	    	    
+	    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	    
+	    <concordion.version>1.4.4</concordion.version>
+	    <concordion-extensions.version>1.1.0</concordion-extensions.version>
+	    
+	    <perfiles.dir>perfiles</perfiles.dir>    	    	    
+	    
+	    <!-- Versión de guava necesaria cuando entre en escena el artefacto bonecp -->
+	    <guava.version>r08</guava.version>
+  	</properties>
+
+	<profiles>
+		<!-- La configuración del perfil de desarrollo. Es el perfil activo por defecto -->
+		<profile>
+			<id>desarrollo</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>	
+				<!-- Especifica la propiedad build.profile.id que debe coincidir con el nombre 
+					del directorio que contiene el fichero de configuración específica del perfil.
+					Puesto que el fichero de configuración de desarrollo se encuentra en la carpeta
+					perfiles/desarrollo, el valor de esta propiedad debe ser desarrollo. 
+				-->
+				<build.profile.id>desarrollo</build.profile.id>
+				
+				<!--
+                Solo se ejecutan tests unitarios cuando el perfil de desarrollo está activo
+	            -->
+	            <skip.integration.tests>true</skip.integration.tests>
+	            <skip.unit.tests>false</skip.unit.tests>
+			</properties>
+		</profile>
+		
+		<!-- La configuración del perfil de integracion. -->
+		<profile>
+			<id>integracion</id>
+			<properties>	
+				<!-- Especifica la propiedad build.profile.id que debe coincidir con el nombre 
+					del directorio que contiene el fichero de configuración específica del perfil.
+					Puesto que el fichero de configuración de desarrollo se encuentra en la carpeta
+					perfiles/integracion, el valor de esta propiedad debe ser integracion. 
+				-->
+				<build.profile.id>integracion</build.profile.id>
+				
+				<!--
+                Solo se ejecutan tests de integración cuando el perfil de integracion está activo. No se ejecutan test unitarios.
+	            -->
+	            <skip.integration.tests>false</skip.integration.tests>
+	            <skip.unit.tests>true</skip.unit.tests>
+			</properties>
+			
+			<build>
+				<plugins>
+
+		            <plugin>
+					    <groupId>org.codehaus.mojo</groupId>
+					    <artifactId>build-helper-maven-plugin</artifactId>
+					    <version>1.7</version>
+					    <executions>
+					        <!-- Add a new source directory to our build -->
+							<execution>
+							    <id>add-integration-test-sources</id>
+							    <phase>generate-test-sources</phase>
+							    <goals>
+							        <goal>add-test-source</goal>
+							    </goals>
+							    <configuration>
+							        <!-- Configures the source directory of our integration tests -->
+							        <sources>
+							            <source>src/integration-test/java</source>
+							        </sources>
+							    </configuration>
+							</execution>
+							        <!-- Add a new resource directory to our build -->
+							<execution>
+								<id>add-integration-test-resources</id>
+								<phase>generate-test-resources</phase>
+								<goals>
+								    <goal>add-test-resource</goal>
+								</goals>
+								<configuration>
+								    <!-- Configures the resource directory of our integration tests -->
+								    <resources>
+								        <!--
+								            Placeholders that are found from the files located in the configured resource
+								            directories are replaced with the property values found from the profile
+								            specific configuration file.
+								        -->
+								        <resource>
+								            <filtering>true</filtering>
+								            <directory>src/integration-test/resources</directory>
+								        </resource>
+								    </resources>
+								</configuration>
+							</execution>
+							
+							<!--
+					            Invokes both the integration-test and the verify goals of the
+					            Failsafe Maven plugin
+					        
+					        <execution>
+					            <id>integration-tests</id>
+					            <goals>
+					                <goal>integration-test</goal>
+					                <goal>verify</goal>
+					            </goals>
+					            <configuration>
+					                
+					                    Skips integration tests if the value of skip.integration.tests
+					                    property is true
+					        
+					                <skipTests>${skip.integration.tests}</skipTests>
+					            </configuration>
+					        </execution>
+					        -->
+					    </executions>
+					</plugin>  	
+						
+					<plugin>
+		                <groupId>org.apache.maven.plugins</groupId>
+		                <artifactId>maven-surefire-plugin</artifactId>
+		                <version>2.12</version>
+		                <configuration>
+		                	<skip>true</skip>
+		                </configuration>
+		                <executions>                	
+		                	<execution>
+		                		<id>Tests de integración</id>
+		                		<phase>integration-test</phase>
+		                		<goals>
+		                			<goal>test</goal>
+		                		</goals>
+		                		<configuration>
+		                			<testSourceDirectory>src/integration-test/java</testSourceDirectory>		                			 
+		                			<skip>false</skip>
+		                			<skipTests>${skip.integration.tests}</skipTests>
+		                			<includes>
+		                				<include>**/IT*.java</include>
+		                			</includes>
+		                			<excludes>
+		                				<exclude>**/*Fixture.java</exclude>
+		                				<exclude>**/*Test.java</exclude>
+		                			</excludes>		                			
+		                		</configuration>
+		                	</execution>                	
+		                </executions>                
+            		</plugin>		
+            						
+				</plugins>
+			</build>
+		</profile>	
+		
+			
+		
+		<!-- La configuración del perfil de test. -->
+		<profile>
+			<id>produccion</id>
+			<properties>	
+				<!-- Especifica la propiedad build.profile.id que debe coincidir con el nombre 
+					del directorio que contiene el fichero de configuración específica del perfil.
+					Puesto que el fichero de configuración de desarrollo se encuentra en la carpeta
+					perfiles/produccion, el valor de esta propiedad debe ser produccion. 
+				-->
+				<build.profile.id>produccion</build.profile.id>
+			</properties>
+		</profile>
+	</profiles>
+	
+	<build>
+		
+		<filters>
+			<!-- Esto asegura que el fichero config.properties se carga siempre del 
+				directorio de configuración del perfil activo
+			-->
+			<filter>${perfiles.dir}/${build.profile.id}/config.properties</filter>
+		</filters>
+		
+		<resources>
+			<!-- 
+				Esto hace que las variables (${}) que se encuentren bajo el directorio src/main/resources 
+				de los proyectos sean sustituidos por las propiedades encontradas del 
+				fichero de configuración específico del perfil activo 
+			-->
+			<resource>
+				<filtering>true</filtering>
+				<directory>src/main/resources</directory>
+			</resource>
+		</resources>
+		
+		<testResources>
+			<!-- 
+				Esto hace que las variables (${}) que se encuentren bajo el directorio src/test/resources 
+				de los proyectos sean sustituidos por las propiedades encontradas del 
+				fichero de configuración específico del perfil activo 
+			-->
+			<testResource>
+				<filtering>true</filtering>
+				<directory>src/test/resources</directory>
+			</testResource>
+			<testResource>
+				<filtering>true</filtering>
+				<directory>src/integration-test/resources</directory>
+			</testResource>
+		</testResources>		
+		
+		<plugins>
+            
+            <plugin>
+		        <groupId>org.codehaus.mojo</groupId>
+		        <artifactId>properties-maven-plugin</artifactId>
+		        <version>1.0-alpha-2</version>
+		        <executions>
+		           <!-- Associate the read-project-properties goal with the initialize phase, to read the properties file. -->
+		          <execution>
+		            <phase>initialize</phase>
+		            <goals>
+		              <goal>read-project-properties</goal>
+		            </goals>
+		            <configuration>
+		              <files>
+		                <file>${perfiles.dir}/${build.profile.id}/config.properties</file>
+		              </files>
+		            </configuration>
+		          </execution>
+		        </executions>
+		    </plugin>
+		     
+		    <plugin>
+		      <groupId>org.apache.maven.plugins</groupId>
+		      <artifactId>maven-antrun-plugin</artifactId>
+		      <version>1.6</version>
+		      <executions>
+		        <execution>
+		          <phase>initialize</phase>
+		          <goals>
+		            <goal>run</goal>
+		          </goals>
+		          <configuration>
+		            <target>
+		              <echo>Displaying value of properties</echo>
+		              <echo>[db.url] ${db.url}</echo>
+		              <echo>[skip.integration.tests] ${skip.integration.tests}</echo>
+		              <echo>[skip.unit.tests] ${skip.unit.tests}</echo>
+		              <echo>[datasource.className] ${datasource.className}</echo>		              
+		            </target>
+		          </configuration>
+		        </execution>
+		      </executions>
+		    </plugin>
+		      
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.12</version>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>                
+                <executions>                	
+                	<execution>
+                		<id>Test unitarios</id>
+                		<phase>test</phase>
+                		<goals>
+                			<goal>test</goal>
+                		</goals>
+                		<configuration>
+                			<testSourceDirectory>src/test/java</testSourceDirectory>
+                			<skip>false</skip>
+                			<skipTests>${skip.unit.tests}</skipTests>
+                			<includes>
+                				<include>**/*Test.java</include>
+                			</includes>
+                			<excludes>
+                				<exclude>**/*Fixture.java</exclude>
+                				<exclude>**/*IT.java</exclude>
+                				<exclude>**/IT*.java</exclude>
+                			</excludes>
+                		</configuration>
+                	</execution>                	
+                </executions>                
+            </plugin>          
+			
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.5.1</version>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.5</version>
+                <configuration>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+					            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <reportPlugins>
+                        <plugin>
+                            <groupId>org.codehaus.mojo</groupId>
+                            <artifactId>cobertura-maven-plugin</artifactId>
+                            <version>2.5.2</version>
+                        </plugin>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-javadoc-plugin</artifactId>
+                            <version>2.9</version>
+                        </plugin>
+                    </reportPlugins>
+                </configuration>
+            </plugin>          		
+		</plugins>	
+	</build>
+	
+	
+	<dependencies>
+	
+			<!-- Test dependencies -->
+			<dependency>
+		        <groupId>org.hamcrest</groupId>
+		        <artifactId>hamcrest-all</artifactId>
+		        <version>1.3</version>
+		        <scope>test</scope>
+		    </dependency>
+		    <dependency>
+		        <groupId>org.mockito</groupId>
+		        <artifactId>mockito-all</artifactId>
+		        <version>1.9.0</version>
+		        <scope>test</scope>
+		    </dependency>
+			<dependency>
+		        <groupId>junit</groupId>
+		        <artifactId>junit</artifactId>
+		        <version>4.10</version>
+		        <scope>test</scope>
+		        <exclusions>
+		            <exclusion>
+		                <artifactId>hamcrest-core</artifactId>
+		                <groupId>org.hamcrest</groupId>
+		            </exclusion>
+		        </exclusions>
+    		</dependency>		
+    		<dependency>
+		  		<groupId>org.springframework</groupId>
+		  		<artifactId>spring-test</artifactId>
+		  		<version>${spring.version}</version>
+		  		<scope>test</scope>	  		
+		  	</dependency>		
+		  	<dependency>
+		  		<groupId>org.easytesting</groupId>
+		  		<artifactId>fest-assert</artifactId>
+		  		<version>1.4</version>
+		  		<scope>test</scope>
+		  	</dependency>	   
+		    
+		    <!-- SLF4J dependencies -->
+		    <dependency>
+		        <groupId>org.slf4j</groupId>
+		        <artifactId>slf4j-api</artifactId>
+		        <version>${slf4j.version}</version>
+		    </dependency>
+		    <dependency>
+		        <groupId>org.slf4j</groupId>
+		        <artifactId>slf4j-log4j12</artifactId>
+		        <version>${slf4j.version}</version>
+		    </dependency>
+		    <dependency>
+		        <groupId>log4j</groupId>
+		        <artifactId>log4j</artifactId>
+		        <version>1.2.17</version>
+    		</dependency>
+    		 		    
+	</dependencies>    
+</project>
