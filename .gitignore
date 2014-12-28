@@ -1,0 +1,9 @@
+.metadata/
+target/
+orienteering-dtos/target/
+orienteering-modelo/target/
+orienteering-repositorio-api/target/
+orienteering-repositorio-impl/target/
+orienteering-servicios-api/target/
+orienteering-servicios-impl/target/
+orienteering-web-spring/target/
