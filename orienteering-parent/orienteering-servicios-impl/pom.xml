@@ -1,0 +1,96 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>cabanas.garcia.orienteering</groupId>
+    <artifactId>orienteering-parent</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+  <artifactId>orienteering-servicios-impl</artifactId>
+  
+  <properties>
+  
+  	<perfiles.dir>../perfiles</perfiles.dir>
+  	    	  
+  </properties>
+  
+  <dependencies>
+  
+	    <!-- Testing dependencies -->
+	    <dependency>
+	         <groupId>org.springframework</groupId>
+	         <artifactId>spring-test</artifactId>
+	         <version>${spring.version}</version>
+	         <scope>test</scope>
+	         <exclusions>
+	         	<exclusion>
+	         		<artifactId>spring-core</artifactId>
+	         		<groupId>org.springframework</groupId>
+	         	</exclusion>
+	         </exclusions>
+	     </dependency>
+	    <!-- BoneCP -->
+	    <dependency>
+	        <groupId>com.jolbox</groupId>
+	        <artifactId>bonecp</artifactId>
+	        <version>${bonecp.version}</version>
+	        <scope>test</scope>
+	    </dependency>
+		<!-- HSQL Database -->
+		<dependency>
+			<groupId>hsqldb</groupId>
+			<artifactId>hsqldb</artifactId>
+			<version>${hsqldb.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- H2 Database -->
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>${h2.version}</version>
+			<scope>test</scope>
+		</dependency>		
+			           
+       <!-- Orienteering dependencies -->
+       <dependency>
+	  		<groupId>cabanas.garcia.orienteering</groupId>
+	  		<artifactId>orienteering-modelo</artifactId>
+	  		<version>0.0.1-SNAPSHOT</version>
+	  	</dependency>
+	  	<dependency>
+	  		<groupId>cabanas.garcia.orienteering</groupId>
+	  		<artifactId>orienteering-servicios-api</artifactId>
+	  		<version>0.0.1-SNAPSHOT</version>
+	  	</dependency>
+	  	<dependency>
+	  		<groupId>cabanas.garcia.orienteering</groupId>
+	  		<artifactId>orienteering-repositorio-api</artifactId>
+	  		<version>0.0.1-SNAPSHOT</version>
+	  	</dependency>
+	  	<dependency>
+	  		<groupId>cabanas.garcia.orienteering</groupId>
+	  		<artifactId>orienteering-repositorio-impl</artifactId>
+	  		<version>0.0.1-SNAPSHOT</version>
+	  	</dependency>
+	  	
+	  	<!-- Spring dependencies -->  	
+	  	<dependency>
+	  		<groupId>org.springframework</groupId>
+	  		<artifactId>spring-context</artifactId>
+	  		<version>${spring.version}</version>
+	  		<scope>compile</scope>	  		
+	  	</dependency>	  	
+	  	<dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+            <version>${spring.version}</version>
+            <scope>compile</scope>
+        </dependency>
+		<dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+            <version>${spring.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+
+  </dependencies>
+</project>
