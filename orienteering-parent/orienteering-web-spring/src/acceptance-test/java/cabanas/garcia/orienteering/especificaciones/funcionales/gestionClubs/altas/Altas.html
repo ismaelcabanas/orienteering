@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<html xmlns:concordion="http://www.concordion.org/2007/concordion">
+
+    <head>
+        <link href="../concordion.css" rel="stylesheet" type="text/css" />
+        <TITLE>Funcionalidad del alta de clubs de orientación</TITLE>
+    </head>
+
+    <body>
+
+        <h1>Funcionalidad del alta de clubs de orientación</h1>
+		
+		<p>
+			Se requiere que un usuario pueda dar de alta un club de orientación a través de un formulario web.
+		</p>
+		<p>	
+			El usuario rellenará la información del club que crea conveniente y podrá dar de alta al club mediante 
+			un botón/link.
+		</p>
+		<p> 
+			En el caso que el proceso de alta tenga éxito, se mostrará 
+			al usuario un mensaje informativo indicando que la operación se realizó con éxito y el sistema redirigirá 
+			al usuario al listado de clubs. 
+		</p>
+		<p>
+			En el caso que el proceso de alta produzca errores, éstos serán 
+			debidamente informados al usuario.
+		</p>
+		<p>	
+			También se le proporcionará al usuario un botón/link que permitirá al usuario cancelar la operación de 
+			alta del club, y el sistema redirigirá al usuario al listado de clubs, indicándole con un mensaje informativo 
+			que la operación fue cancelada.
+			
+		</p>        	
+      <div class="example">
+            <h3>Alta de un club de orientación</h3>
+                
+            <p>    	
+            	Dado un usuario, que accede al formulario de alta de un club a través del menú, pulsando sobre el <i concordion:execute="#listadoPage = listadoClubs()">link de gestión de clubs</i>, accediendo a la página de <span concordion:assertEquals="#listadoPage.getTitulo()">Listado de clubs de orientación</span>,<br/>
+                pulsa sobre el botón <b concordion:execute="#altaPage = nuevoClub()">Nuevo club</b> y el sistema dirige al usuario a la página de <span concordion:assertEquals="#altaPage.getTitulo()">Alta de clubs de orientación</span>,<br/>
+                <span concordion:execute="rellenaDatosClub()">rellena el formulario de alta de un club</span>,<br/>
+                pulsa sobre el botón de <b concordion:execute="#listadoPage = crearClub()">Crear club</b> y <br/>
+                el sistema redirige al usuario a la página de <span concordion:assertEquals="#listadoPage.getTitulo()">Listado de clubs de orientación</span> e
+                informa que <b concordion:assertEquals="#listadoPage.getMensaje()">El registro se ha dado de alta correctamente</b>.             
+            </p>    
+        </div>
+        
+        <div class="example">
+            <h3>Cancelación del alta de un club de orientación</h3>
+                
+            <p>    	
+            	Dado un usuario, que accede al formulario de alta de un club a través del menú, pulsando sobre el <i concordion:execute="#listadoPage = listadoClubs()">link de gestión de clubs</i>, accediendo a la página de <span concordion:assertEquals="#listadoPage.getTitulo()">Listado de clubs de orientación</span>,<br/>
+                pulsa sobre el botón <b concordion:execute="#altaPage = nuevoClub()">Nuevo club</b> y el sistema dirige al usuario a la página de <span concordion:assertEquals="#altaPage.getTitulo()">Alta de clubs de orientación</span>,<br/>
+                pulsa sobre el botón de <b concordion:execute="#listadoPage = cancelar()">Cancelar</b> y <br/>
+                el sistema redirige al usuario a la página de <span concordion:assertEquals="#listadoPage.getTitulo()">Listado de clubs de orientación</span> e
+                informa que <b concordion:assertEquals="#listadoPage.getMensaje()">Se ha cancelado la operación</b>.       
+            </p>    
+        </div>
+<!--                          
+        <h2>Escenarios alternativos</h2>
+
+	    <ul>	
+	        <li><a concordion:run="concordion" href="AltasValidaciones.html">Errores de validación en el alta del club de orientación</a></li>	        	        
+	    </ul>
+ -->             
+    </body>
+</html>
+

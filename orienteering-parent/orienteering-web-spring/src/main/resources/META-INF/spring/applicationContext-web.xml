@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       	http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
+       	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+
+ 	<!-- Este tag registra los beans RequestMappingHandlerMapping, RequestMappingHandlerAdapter y ExceptionHandlerExceptionResolver (entre otros) que son 
+ 		necesarios para que Spring MVC despache las peticiones a @Controllers con métodos anotados con @RequestMapping y @ExceptionHandler, entre otros. Este tag configura estos beans con 
+ 		una determinada configuración por defecto basada en lo que haya en nuestro classpath:
+ 		
+ 		1.- Soporte para conversión de tipos de JavaBeans durante el Data Binding a través del servicio ConversionService.
+ 		2.- Soporte para formateo de campos numéricos que usen @NumberFormat a través del servicio ConversionService.
+ 		3.- Soporte para formateo de campos fecha que usen @DateTimeFormat, si JodaTime 1.3+ está en el classpath 
+ 		4.- Soporte para validación para inputs de los @Controllers con @Valid, si existe en el classpath un proveedor de la especificación JSR-303 
+ 		5.- Soporte para leer y escribir XML, si JAXB está presente en el classpath
+ 		6.- Soporte para leer y escribir JSON, si Jackson está presente en el classpath
+ 	--> 	
+    <mvc:annotation-driven/>
+    
+    <!-- Este tag permite servir recursos estáticos por un ResourceHttpRequestHandler. Esto proporciona una forma 
+    	adecuada de servir recursos estáticos desde otras ubicaciones que sean distintas del context path, e incluso 
+    	recursos que están situados en el classpath.
+     -->
+    <mvc:resources mapping="/static/**" location="/static/"/>
+    
+    <!-- Este tag permite mapear al DispatcherServlet a "/", mientras que continúa permitiendo a las peticiones de recursos 
+    	estáticos ser manejados por el Servlet por defecto del contenedor. -->
+    <mvc:default-servlet-handler/>
+    
+    
+    <!-- Este tag permite definir de forma rápida un ParameterizableViewController que hace un forward a una vista cuando 
+    	se ejecuta el path definido. Su uso es conveniente cuando no se necesita ejecutar lógica en un controlador para devolver 
+    	la salida.
+    	<mvc:view-controller path="/" view-name="home" />
+    	<mvc:view-controller path="/login" view-name="login" />	
+    -->         
+    
+    
+    <context:annotation-config />
+    
+    <!-- Esto permite a Spring descubrir los controladores -->
+    <context:component-scan base-package="
+    		cabanas.garcia.orienteering.web.controllers" />
+    
+    <!-- El resolutor de las vistas -->
+    <bean id="viewResolver"
+        	class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
+        <property name="prefix" value="/WEB-INF/jsp/" />
+        <property name="suffix" value=".jsp" />
+    </bean>        
+    
+</beans>
+
+

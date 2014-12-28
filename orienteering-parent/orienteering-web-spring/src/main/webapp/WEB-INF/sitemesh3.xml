@@ -1,0 +1,16 @@
+<sitemesh>	
+	
+	<!-- <tag-rule-bundle class="org.sitemesh.content.tagrules.html.Sm2TagRuleBundle"></tag-rule-bundle> -->	
+	<!-- <tag-rule-bundle class="org.sitemesh.content.tagrules.html.DivExtractingTagRuleBundle"></tag-rule-bundle> -->
+	
+	<!-- <mapping path="*listado.jsp" decorator="/WEB-INF/decorators/plantilla__listado_base.jsp" />
+	<mapping path="*.jsp" decorator="/WEB-INF/decorators/plantilla_base_menu_vertical.jsp" /> -->
+	
+	<mapping path="/prueba.html" exclue="true" />
+	<mapping path="/static/*" exclue="true" />
+	<mapping path="/static/metronicv31/index_metronic.jsp*" exclue="true" />
+	<mapping path="/table_ajax.jsp*" exclue="true" />
+	<mapping path="/anonimo/*.jsp" decorator="/WEB-INF/decorators/plantilla_base_menu_horizontal_anonimo.jsp" />
+	<mapping path="/*" decorator="/WEB-INF/decorators/plantilla_metronic.jsp" />	
+	
+</sitemesh>

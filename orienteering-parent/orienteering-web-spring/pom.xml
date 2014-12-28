@@ -1,0 +1,658 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>cabanas.garcia.orienteering</groupId>
+    <artifactId>orienteering-parent</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+  <artifactId>orienteering-web-spring</artifactId>
+  <packaging>war</packaging>
+  
+	<properties>
+		
+	    <jetty.version>8.1.5.v20120716</jetty.version>            	            	
+	       		       	
+	    <web.port>8888</web.port>
+		<web.context>/orienteering-web</web.context>
+		<web.host>http://localhost:${web.port}</web.host>
+		
+		<perfiles.dir>../perfiles</perfiles.dir>				
+  	
+  	</properties>  
+  
+  <profiles>
+		<!-- La configuración del perfil de integracion. -->
+		<profile>
+			<id>test-aceptacion</id>
+			<properties>	
+				<!-- Especifica la propiedad build.profile.id que debe coincidir con el nombre 
+					del directorio que contiene el fichero de configuración específica del perfil.
+					Puesto que el fichero de configuración de desarrollo se encuentra en la carpeta
+					perfiles/test-aceptacion, el valor de esta propiedad debe ser test-aceptacion. 
+				-->
+				<build.profile.id>test-aceptacion</build.profile.id>
+				
+				<!--
+                Solo se ejecutan tests de integración cuando el perfil de integracion está activo. No se ejecutan test unitarios.
+	            -->
+	            <skip.acceptance.tests>false</skip.acceptance.tests>
+	            <skip.unit.tests>true</skip.unit.tests>
+	            
+	            <!-- Versión de guava necesaria cuando entre en escena el artefacto selenium-java -->
+	            <guava.version>15.0</guava.version>
+			</properties>
+			
+			<build>
+				<plugins>
+
+		            <plugin>
+					    <groupId>org.codehaus.mojo</groupId>
+					    <artifactId>build-helper-maven-plugin</artifactId>
+					    <version>1.7</version>
+					    <executions>
+					        <!-- Add a new source directory to our build -->
+							<execution>
+							    <id>add-acceptance-test-sources</id>
+							    <phase>compile</phase>
+							    <goals>
+							        <goal>add-test-source</goal>
+							    </goals>
+							    <configuration>
+							        <!-- Configures the source directory of our integration tests -->
+							        <sources>
+							            <source>src/acceptance-test/java</source>
+							        </sources>
+							    </configuration>
+							</execution>
+							<!-- Add a new resource directory to our build -->
+							<execution>
+								<id>add-acceptance-test-resources</id>
+								<phase>generate-test-sources</phase>
+								<goals>
+								    <goal>add-test-resource</goal>
+								</goals>
+								<configuration>
+								    <!-- Configures the resource directory of our integration tests -->
+								    <resources>
+								        <!--
+								            Placeholders that are found from the files located in the configured resource
+								            directories are replaced with the property values found from the profile
+								            specific configuration file.
+								        -->
+								        <resource>
+								            <directory>src/acceptance-test/java</directory>
+								            <includes>
+								            	<include>**/*.html</include>
+								            </includes>
+								        </resource>
+								    </resources>
+								</configuration>
+							</execution>
+							
+							<!--
+					            Invokes both the integration-test and the verify goals of the
+					            Failsafe Maven plugin
+					        
+					        <execution>
+					            <id>integration-tests</id>
+					            <goals>
+					                <goal>integration-test</goal>
+					                <goal>verify</goal>
+					            </goals>
+					            <configuration>
+					                
+					                    Skips integration tests if the value of skip.integration.tests
+					                    property is true
+					        
+					                <skipTests>${skip.integration.tests}</skipTests>
+					            </configuration>
+					        </execution>
+					        -->
+					    </executions>
+					</plugin>  	
+					
+			        <!-- Utilizado para generar los esquemas -->   		
+		      		<plugin>
+			  			<groupId>org.codehaus.mojo</groupId>
+			  			<artifactId>hibernate3-maven-plugin</artifactId>
+			  			<version>2.2</version>
+			  			<executions>
+			  				<execution>		
+			  					<id>Generación esquema ddl CREATE</id>		        	
+					            <phase>pre-integration-test</phase>
+					            <goals>
+					              <goal>hbm2ddl</goal>
+					            </goals>
+					            <configuration>
+					  				<components>
+					  					<component>
+					  						<name>hbm2ddl</name>
+					  						<implementation>jpaconfiguration</implementation>
+					  					</component>
+					  				</components>
+					  				<componentProperties>
+					  					<!-- genera sentencias drop -->
+					  					<drop>false</drop>
+					  					<!-- genera sentencias create -->
+					  					<create>true</create>
+					  					<!-- con export=false genera los ddls en el fichero de salida definido -->
+					  					<export>false</export>
+					  					<!-- formatea las sentencias -->
+					  					<format>true</format>
+					  					<!-- nombre de la unidad de persistencia definida en el persistence.xml -->
+					  					<persistenceunit>Orienteering</persistenceunit>
+					  					<!-- path al fichero de propiedades donde se localiza básicamente el dialecto de la base de datos -->
+					  					<propertyfile>../perfiles/${build.profile.id}/config.properties</propertyfile>	
+					  					<!-- nombre del fichero de salida que tendrá las sql generadas -->
+					  					<outputfilename>schema-create-test.sql</outputfilename>	
+					  				</componentProperties>
+					  			</configuration>
+					        </execution>
+					        <execution>		
+			  					<id>Generación esquema ddl DROP</id>		        	
+					            <phase>pre-integration-test</phase>
+					            <goals>
+					              <goal>hbm2ddl</goal>
+					            </goals>
+					            <configuration>
+					  				<components>
+					  					<component>
+					  						<name>hbm2ddl</name>
+					  						<implementation>jpaconfiguration</implementation>
+					  					</component>
+					  				</components>
+					  				<componentProperties>
+					  					<!-- genera sentencias drop -->
+					  					<drop>true</drop>
+					  					<!-- genera sentencias create -->
+					  					<create>false</create>
+					  					<!-- con export=false genera los ddls en el fichero de salida definido -->
+					  					<export>false</export>
+					  					<!-- formatea las sentencias -->
+					  					<format>true</format>
+					  					<!-- nombre de la unidad de persistencia definida en el persistence.xml -->
+					  					<persistenceunit>Orienteering</persistenceunit>
+					  					<!-- path al fichero de propiedades donde se localiza básicamente el dialecto de la base de datos -->
+					  					<propertyfile>../perfiles/${build.profile.id}/config.properties</propertyfile>	
+					  					<!-- nombre del fichero de salida que tendrá las sql generadas -->
+					  					<outputfilename>schema-drop-test.sql</outputfilename>	
+					  				</componentProperties>
+					  			</configuration>
+					        </execution>  		        
+			  			</executions>  		  			
+			  			<dependencies>
+			  				<dependency>
+			    				<groupId>org.slf4j</groupId>
+			    				<artifactId>slf4j-api</artifactId>
+			    				<version>${slf4j.version}</version>		
+			    			</dependency>
+			    			<dependency>
+			    				<groupId>org.slf4j</groupId>
+			    				<artifactId>slf4j-simple</artifactId>
+			    				<version>${slf4j.version}</version>		
+			    			</dependency>  				
+			  			</dependencies>	
+			  		</plugin>
+			  	
+	  			    <!-- Jetty plugin -->
+			  		<plugin>
+					  	<groupId>org.mortbay.jetty</groupId>
+						<artifactId>jetty-maven-plugin</artifactId>
+						<version>${jetty.version}</version>
+						<configuration>
+							<connectors>
+								<connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
+									<port>${web.port}</port>
+								</connector>
+							</connectors>
+						    <scanIntervalSeconds>10</scanIntervalSeconds>
+							<reload>automatic</reload>
+							<stopKey>foo</stopKey>
+							<stopPort>9090</stopPort>
+							<webAppConfig>
+								<contextPath>${web.context}</contextPath>
+								<sessionHandler implementation="org.eclipse.jetty.server.session.SessionHandler">
+									<sessionManager implementation="org.eclipse.jetty.server.session.HashSessionManager">
+										<storeDirectory>${basedir}/target/sessions</storeDirectory>
+									</sessionManager>
+								</sessionHandler>
+							</webAppConfig>
+							<scanTargetPatterns>
+								<scanTargetPattern>                            
+									<directory>src/main/webapp/WEB-INF</directory>
+									<includes>
+										<include>**/*</include>
+									</includes>
+								</scanTargetPattern>
+								<scanTargetPattern>                            
+									<directory>src/main/resources</directory>
+									<includes>
+										<include>**/*.xml</include>
+										<include>**/*.properties</include>
+									</includes>
+								</scanTargetPattern>
+								<scanTargetPattern>
+									<directory>src/main/java</directory>
+									<includes>
+										<include>**/*.java</include>
+									</includes>
+								</scanTargetPattern>
+							</scanTargetPatterns>
+						</configuration>			
+						<executions>
+				          <execution>
+				            <id>start-jetty</id>
+				            <phase>pre-integration-test</phase>
+				            <goals>
+				              <goal>start</goal>
+				            </goals>
+				            <configuration>
+				              <scanIntervalSeconds>0</scanIntervalSeconds>
+				              <daemon>true</daemon>
+				            </configuration>
+				          </execution>
+				          <execution>
+				            <id>stop-jetty</id>
+				            <phase>post-integration-test</phase>
+				            <goals>
+				              <goal>stop</goal>
+				            </goals>
+				          </execution>
+				        </executions>					
+					</plugin>
+								  	
+			  		<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>sql-maven-plugin</artifactId>
+						<version>1.5</version>
+						<executions>
+							<execution>
+								<id>Borra la base de datos de integración si estuviera</id>
+								<phase>pre-integration-test</phase>		
+								<goals>
+									<goal>execute</goal>
+								</goals>
+								<configuration>
+									<autocommit>true</autocommit>
+									<srcFiles>
+										<srcFile>target/hibernate3/sql/schema-drop-test.sql</srcFile>
+									</srcFiles>	
+									<onError>continue</onError>
+								</configuration>			
+							</execution>
+							<execution>
+								<id>Creación base de datos de integración</id>
+								<phase>pre-integration-test</phase>		
+								<goals>
+									<goal>execute</goal>
+								</goals>
+								<configuration>
+									<autocommit>true</autocommit>						
+									<srcFiles>
+										<srcFile>target/hibernate3/sql/schema-create-test.sql</srcFile>
+									</srcFiles>	
+								</configuration>			
+							</execution>	
+							<execution>
+								<id>Borrado de base de datos de integración</id>
+								<phase>post-integration-test</phase>		
+								<goals>
+									<goal>execute</goal>
+								</goals>
+								<configuration>
+									<autocommit>true</autocommit>						
+									<srcFiles>
+										<srcFile>target/hibernate3/sql/schema-drop-test.sql</srcFile>
+									</srcFiles>	
+								</configuration>			
+							</execution>
+							<!-- 							
+							<execution>
+								<id>Para la base de datos H2</id>
+								<phase>process-test-resources</phase>		
+								<goals>
+									<goal>execute</goal>
+								</goals>
+								<configuration>
+									<autocommit>true</autocommit>
+									<sqlCommand>SHUTDOWN</sqlCommand>	
+								</configuration>			
+							</execution>
+							 -->
+						</executions>
+						<configuration>
+							<driver>${db.driver}</driver>
+							<url>${db.url}</url>
+							<username>${db.username}</username>
+							<password>${db.password}</password>
+						</configuration>			
+						<dependencies>
+							<dependency>
+								<groupId>com.h2database</groupId>
+								<artifactId>h2</artifactId>
+								<version>${h2.version}</version>
+							</dependency>	
+						</dependencies>
+					</plugin>						
+					
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>dbunit-maven-plugin</artifactId>
+						<version>1.0-beta-3</version>
+						<executions>
+							<execution>
+								<id>Preparación de base de la datos</id>
+								<phase>pre-integration-test</phase>
+								<goals>
+									<goal>operation</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<driver>${db.driver}</driver>
+							<url>${db.url}</url>
+							<username>${db.username}</username>
+							<password>${db.password}</password>
+							<format>xml</format>
+							<type>CLEAN_INSERT</type>
+							<src>../perfiles/${build.profile.id}/sql/data/datos.xml</src>
+						</configuration>
+						<dependencies>
+							<dependency>
+								<groupId>com.h2database</groupId>
+								<artifactId>h2</artifactId>
+								<version>${h2.version}</version>
+							</dependency>
+						</dependencies>
+					</plugin>
+										
+					<plugin>
+		                <groupId>org.apache.maven.plugins</groupId>
+		                <artifactId>maven-surefire-plugin</artifactId>
+		                <version>2.12</version>
+		                <configuration>
+		                	<skip>true</skip>
+		                </configuration>
+		                <executions>                	
+		                	<execution>
+		                		<id>Tests de aceptación</id>
+		                		<phase>integration-test</phase>
+		                		<goals>
+		                			<goal>test</goal>
+		                		</goals>
+		                		<configuration>
+		                			<testSourceDirectory>src/acceptance-test/java</testSourceDirectory>		                			 
+		                			<skip>false</skip>
+		                			<skipTests>${skip.acceptance.tests}</skipTests>
+		                			<includes>
+		                				<include>**/*Fixture.java</include>
+		                			</includes>
+		                			<excludes>
+		                				<exclude>**/IT*.java</exclude>
+		                				<exclude>**/*Test.java</exclude>
+		                			</excludes>		                			
+		                		</configuration>
+		                	</execution>                	
+		                </executions>                
+            		</plugin> 	  				
+  			</plugins>  			  		
+  		</build>
+  		
+  		<dependencies>
+  			<dependency>
+			  <groupId>commons-dbcp</groupId>
+			  <artifactId>commons-dbcp</artifactId>
+			  <version>1.4</version>
+			</dependency>
+  		</dependencies>
+  	</profile>
+  </profiles>
+  
+  <build>  	
+    	
+  		<plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.1.1</version>
+                <configuration>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                </configuration>
+            </plugin>
+
+ 			<!-- Jetty plugin -->
+	  		<plugin>
+			  	<groupId>org.mortbay.jetty</groupId>
+				<artifactId>jetty-maven-plugin</artifactId>
+				<version>${jetty.version}</version>
+				<configuration>
+					<connectors>
+						<connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
+							<port>${web.port}</port>
+						</connector>
+					</connectors>
+				    <scanIntervalSeconds>10</scanIntervalSeconds>
+					<reload>automatic</reload>
+					<stopKey>foo</stopKey>
+					<stopPort>9090</stopPort>
+					<webAppConfig>
+						<contextPath>${web.context}</contextPath>
+						<sessionHandler implementation="org.eclipse.jetty.server.session.SessionHandler">
+							<sessionManager implementation="org.eclipse.jetty.server.session.HashSessionManager">
+								<storeDirectory>${basedir}/target/sessions</storeDirectory>
+							</sessionManager>
+						</sessionHandler>
+					</webAppConfig>
+					<scanTargetPatterns>
+						<scanTargetPattern>                            
+							<directory>src/main/webapp/WEB-INF</directory>
+							<includes>
+								<include>**/*</include>
+							</includes>
+						</scanTargetPattern>
+						<scanTargetPattern>                            
+							<directory>src/main/resources</directory>
+							<includes>
+								<include>**/*.xml</include>
+								<include>**/*.properties</include>
+							</includes>
+						</scanTargetPattern>
+						<scanTargetPattern>
+							<directory>src/main/java</directory>
+							<includes>
+								<include>**/*.java</include>
+							</includes>
+						</scanTargetPattern>
+					</scanTargetPatterns>
+				</configuration>			
+			</plugin>
+													              	
+  		</plugins>
+  </build>
+  
+  <dependencies>
+  	<dependency>
+		<groupId>commons-lang</groupId>
+		<artifactId>commons-lang</artifactId>
+		<version>2.6</version>
+	</dependency>  	
+	
+  	<!-- Orienteering dependencies -->
+  	<dependency>
+    	<groupId>cabanas.garcia.orienteering</groupId>
+    	<artifactId>orienteering-servicios-api</artifactId>
+    	<version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+    	<groupId>cabanas.garcia.orienteering</groupId>
+    	<artifactId>orienteering-repositorio-api</artifactId>
+    	<version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+    	<groupId>cabanas.garcia.orienteering</groupId>
+    	<artifactId>orienteering-servicios-impl</artifactId>
+    	<version>0.0.1-SNAPSHOT</version>
+    </dependency>
+  	
+  	<!-- Sitemesh -->
+  	<dependency>
+  		<groupId>org.sitemesh</groupId>
+  		<artifactId>sitemesh</artifactId>
+  		<version>3.0-alpha-2</version>
+  		<scope>compile</scope>
+  	</dependency>	
+  	  	
+    <!-- Servlet API 3.0 -->
+    <dependency>
+        <groupId>org.glassfish</groupId>
+        <artifactId>javax.servlet</artifactId>
+        <version>3.0</version>
+        <scope>provided</scope>
+    </dependency>
+          	
+    <!-- JSTL -->
+    <dependency>
+        <groupId>javax.servlet.jsp</groupId>
+        <artifactId>jsp-api</artifactId>
+        <version>2.1</version>
+        <scope>provided</scope>
+    </dependency>
+    <!-- 
+    <dependency>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>jsp-2.1</artifactId>
+        <version>6.0.0</version>
+      </dependency>
+     -->
+    <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>jstl</artifactId>
+        <version>1.1.2</version>
+        <scope>provided</scope>
+    </dependency>
+    <dependency>
+        <groupId>taglibs</groupId>
+        <artifactId>standard</artifactId>
+        <version>1.1.2</version>
+        <scope>provided</scope>
+    </dependency>
+    
+    <!-- Spring Framework -->
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-aop</artifactId>
+        <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-beans</artifactId>
+        <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-core</artifactId>
+        <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-context-support</artifactId>
+        <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-context</artifactId>
+        <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-jdbc</artifactId>
+        <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-orm</artifactId>
+        <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-tx</artifactId>
+        <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-web</artifactId>
+        <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-webmvc</artifactId>
+        <version>${spring.version}</version>
+    </dependency>
+
+    <!-- BoneCP -->
+    <dependency>
+        <groupId>com.jolbox</groupId>
+        <artifactId>bonecp</artifactId>
+        <version>${bonecp.version}</version>
+        <scope>runtime</scope>   
+        <exclusions>
+        	<exclusion>
+        		<groupId>com.google.guava</groupId>
+        		<artifactId>guava</artifactId>
+        	</exclusion>
+        </exclusions>     
+    </dependency>       
+     
+	<!-- H2 Database -->
+	<dependency>
+		<groupId>com.h2database</groupId>
+		<artifactId>h2</artifactId>
+		<version>${h2.version}</version>
+		<scope>runtime</scope>
+	</dependency>	
+	
+	<!-- Concordion y Selenium dependencies -->       
+    <dependency>
+      <groupId>org.concordion</groupId>
+      <artifactId>concordion</artifactId>
+      <version>${concordion.version}</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>xml-apis</groupId>
+          <artifactId>xml-apis</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>	
+
+    <dependency>
+      <groupId>org.concordion</groupId>
+      <artifactId>concordion-extensions</artifactId>
+      <version>${concordion-extensions.version}</version>
+      <scope>test</scope>
+    </dependency>
+    	
+    <dependency>
+    	<groupId>org.seleniumhq.selenium</groupId>
+        <artifactId>selenium-java</artifactId>
+        <version>2.41.0</version>
+        <scope>test</scope>   
+        <exclusions>
+        	<exclusion>
+        		<groupId>com.google.guava</groupId>
+        		<artifactId>guava</artifactId>
+        	</exclusion>
+        </exclusions>             
+    </dependency>
+    	        
+   	<!-- Dependencia necesaria para los artefactos bonecp y selenium-java, pero cada artefacto necesita 
+   		una versión, por lo que he tenido que parametrizarlo
+   	-->
+   	<dependency>
+    	<groupId>com.google.guava</groupId>
+    	<artifactId>guava</artifactId>
+    	<version>${guava.version}</version>
+    </dependency>
+  </dependencies>
+    
+</project>

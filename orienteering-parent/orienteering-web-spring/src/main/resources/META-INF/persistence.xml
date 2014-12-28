@@ -1,0 +1,10 @@
+<persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
+    <persistence-unit name="Orienteering" transaction-type="RESOURCE_LOCAL">
+    	
+    	<class>cabanas.garcia.orienteering.modelo.club.Club</class>
+    	
+    	<properties>
+    		<!-- <property name="hibernate.hbm2ddl.auto" value="create-drop" /> -->
+    	</properties>		
+    </persistence-unit>
+</persistence>
