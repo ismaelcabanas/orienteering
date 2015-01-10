@@ -11,6 +11,7 @@
 	<mapping path="/static/metronicv31/index_metronic.jsp*" exclue="true" />
 	<mapping path="/table_ajax.jsp*" exclue="true" />
 	<mapping path="/anonimo/*.jsp" decorator="/WEB-INF/decorators/plantilla_base_menu_horizontal_anonimo.jsp" />
+	<!-- <mapping path="/*" decorator="/WEB-INF/decorators/plantilla_blank.jsp" /> -->
 	<mapping path="/*" decorator="/WEB-INF/decorators/plantilla_metronic.jsp" />	
 	
 </sitemesh>

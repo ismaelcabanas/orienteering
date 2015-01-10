@@ -2,6 +2,7 @@
 
 <dataset>
     
-	<CLUB ID="999" NOMBRE="CLUB 999" />
+	<CLUBS ID="999" NOMBRE="CLUB 999" />
+	<CLUBS ID="998" NOMBRE="Club Escondite Madrid" />
     
 </dataset>

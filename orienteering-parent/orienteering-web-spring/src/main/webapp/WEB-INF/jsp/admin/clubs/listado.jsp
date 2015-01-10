@@ -93,7 +93,7 @@
 
 								<i class="fa fa-plus"></i>
 
-								<span class="hidden-480">Nuevo Club </span>
+								<span class="hidden-480"><spring:message code="texto.boton.nuevo"/> </span>
 
 								</a>
 
@@ -105,194 +105,80 @@
 
 							<div class="table-container">								
 
- 
+
 								<table class="table table-striped table-bordered table-hover" id="tabla_clubes">
 
-								<thead>
-
-								<tr role="row" class="heading">
-
-									<th width="20%">
-
-										 Nombre
-
-									</th>
-
-									<th width="15%">
-
-										 Provincia
-
-									</th>
-
-									<th width="15%">
-
-										 Localidad
-
-									</th>
-
-
-									<th width="16%">
-
-										 Acciones
-
-									</th>
-
-								</tr>
- 
-								<tr role="row" class="filter">
-
-									<td>
-
-										<input type="text" class="form-control form-filter input-sm" name="nombre" placeholder="Nombre del club">
-
-									</td>
-
-
-									<td>
-
-										<select name="provincia" class="form-control form-filter input-sm">
-
-											<option value="">Select...</option>
-
-											<option value="01">Madrid</option>
-
-											<option value="02">Huelva</option>
+									<thead>
 	
-										</select>
-
-									</td>
-									
-									<td>
-
-										<select name="localidad" class="form-control form-filter input-sm">
-
-											<option value="">Select...</option>
-
-											<option value="01">Madrid</option>
-
-											<option value="02">Valdemoro</option>
+									<tr role="row" class="heading">
 	
-										</select>
-
-									</td>
-
-									<td>
-
-										<div class="margin-bottom-5">
-
-											<button class="btn btn-sm yellow filter-submit margin-bottom"><i class="fa fa-search"></i> Buscar</button>
-											<button class="btn btn-sm red filter-cancel"><i class="fa fa-times"></i> Limpiar</button>
-												
-										</div>
-
-									</td>
-
-								</tr>
- 
-								</thead>
-
-								<tbody>
-
-								</tbody>
+										<th width="20%">
+	
+											 <spring:message code="entidad.club.nombre"/>
+	
+										</th>									
+	
+	
+										<th width="16%">
+	
+											 <spring:message code="texto.acciones"/>
+	
+										</th>
+	
+									</tr>
+	 
+									<tr role="row" class="filter">
+	
+										<td>
+	
+											<input id="txtBusqNombre" type="text" class="form-control form-filter input-sm" name="nombre" placeholder="Nombre del club">
+	
+										</td>
+										
+	
+										<td>
+	
+											<div class="margin-bottom-5">
+	
+												<button id="btnBuscar" class="btn btn-sm yellow filter-submit margin-bottom"><i class="fa fa-search"></i> <spring:message code="texto.boton.buscar"/></button>
+												<button class="btn btn-sm red filter-cancel"><i class="fa fa-times"></i> <spring:message code="texto.boton.limpiar"/></button>
+													
+											</div>
+	
+										</td>
+																			
+									</tr>																
+	 
+									</thead>
+	
+									<tbody id="resultado_consulta">
+										<tr>
+											<td>Nombre de Club 1</td>
+											<td>
+												<a href="detalle.jsp?id=1&page=club&submenu=01" class="btn btn-sm"><i class="fa fa-eye"></i> Ver</a>
+												<a href="edicion.jsp?id=1&page=club&submenu=01" class="btn btn-sm"><i class="fa fa-edit"></i> Editar</a>
+												<a href="" class="btn btn-sm"><i class="fa fa-trash-o"></i> Eliminar</a>
+											</td>
+										</tr>
+										<tr>
+											<td>Nombre de Club 1</td>
+											<td>
+												<a href="detalle.jsp?id=1&page=club&submenu=01" class="btn btn-sm"><i class="fa fa-eye"></i> Ver</a>
+												<a href="edicion.jsp?id=1&page=club&submenu=01" class="btn btn-sm"><i class="fa fa-edit"></i> Editar</a>
+												<a href="" class="btn btn-sm"><i class="fa fa-trash-o"></i> Eliminar</a>
+											</td>
+										</tr>
+										<tr>
+											<td>Nombre de Club 1</td>
+											<td>
+												<a href="detalle.jsp?id=1&page=club&submenu=01" class="btn btn-sm"><i class="fa fa-eye"></i> Ver</a>
+												<a href="edicion.jsp?id=1&page=club&submenu=01" class="btn btn-sm"><i class="fa fa-edit"></i> Editar</a>
+												<a href="" class="btn btn-sm"><i class="fa fa-trash-o"></i> Eliminar</a>
+											</td>
+										</tr>
+									</tbody>
 
 								</table>
-
- <!-- 
- 								<table class="table table-striped table-bordered table-hover" id="datatable_ajax">
-
-								<thead>
-
-								<tr role="row" class="heading">
-
-									<th width="2%">
-
-										<input type="checkbox" class="group-checkable">
-
-									</th>
-
-									<th width="5%">
-
-										 Record&nbsp;#
-
-									</th>
-
-						
-
-									<th width="15%">
-
-										 Customer
-
-									</th>
-
-									<th width="10%">
-
-										 Ship&nbsp;To
-
-									</th>
-
-
-									<th width="10%">
-
-										 Actions
-
-									</th>
-
-								</tr>
-
-								<tr role="row" class="filter">
-
-									<td>
-
-									</td>
-
-									<td>
-
-										<input type="text" class="form-control form-filter input-sm" name="order_id">
-
-									</td>
-
-									
-
-									<td>
-
-										<input type="text" class="form-control form-filter input-sm" name="order_customer_name">
-
-									</td>
-
-									<td>
-
-										<input type="text" class="form-control form-filter input-sm" name="order_ship_to">
-
-									</td>
-
-						
-
-									
-
-									
-									<td>
-
-										<div class="margin-bottom-5">
-
-											<button class="btn btn-sm yellow filter-submit margin-bottom"><i class="fa fa-search"></i> Search</button>
-
-										</div>
-
-										<button class="btn btn-sm red filter-cancel"><i class="fa fa-times"></i> Reset</button>
-
-									</td>
-
-								</tr>
-
-								</thead>
-
-								<tbody>
-
-								</tbody>
-
-								</table>
-  -->
-  
 
 							</div>
 
