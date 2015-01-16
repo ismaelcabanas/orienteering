@@ -1,5 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
 <html>
@@ -128,7 +129,9 @@
 									</tr>
 	 
 									<tr role="row" class="filter">
-	
+										
+										<form:form method="POST" commandName="clubBusquedaForm" action="${pageContext.servletContext.contextPath}/admin/clubs/buscar">
+										
 										<td>
 	
 											<input id="txtBusqNombre" type="text" class="form-control form-filter input-sm" name="nombre" placeholder="Nombre del club">
@@ -140,42 +143,30 @@
 	
 											<div class="margin-bottom-5">
 	
-												<button id="btnBuscar" class="btn btn-sm yellow filter-submit margin-bottom"><i class="fa fa-search"></i> <spring:message code="texto.boton.buscar"/></button>
+												<button id="btnBuscar" type="submit" class="btn btn-sm yellow filter-submit margin-bottom"><i class="fa fa-search"></i> <spring:message code="texto.boton.buscar"/></button>
 												<button class="btn btn-sm red filter-cancel"><i class="fa fa-times"></i> <spring:message code="texto.boton.limpiar"/></button>
 													
 											</div>
 	
 										</td>
-																			
+										</form:form>									
 									</tr>																
 	 
 									</thead>
 	
 									<tbody id="resultado_consulta">
-										<tr>
-											<td>Nombre de Club 1</td>
-											<td>
-												<a href="detalle.jsp?id=1&page=club&submenu=01" class="btn btn-sm"><i class="fa fa-eye"></i> Ver</a>
-												<a href="edicion.jsp?id=1&page=club&submenu=01" class="btn btn-sm"><i class="fa fa-edit"></i> Editar</a>
-												<a href="" class="btn btn-sm"><i class="fa fa-trash-o"></i> Eliminar</a>
-											</td>
-										</tr>
-										<tr>
-											<td>Nombre de Club 1</td>
-											<td>
-												<a href="detalle.jsp?id=1&page=club&submenu=01" class="btn btn-sm"><i class="fa fa-eye"></i> Ver</a>
-												<a href="edicion.jsp?id=1&page=club&submenu=01" class="btn btn-sm"><i class="fa fa-edit"></i> Editar</a>
-												<a href="" class="btn btn-sm"><i class="fa fa-trash-o"></i> Eliminar</a>
-											</td>
-										</tr>
-										<tr>
-											<td>Nombre de Club 1</td>
-											<td>
-												<a href="detalle.jsp?id=1&page=club&submenu=01" class="btn btn-sm"><i class="fa fa-eye"></i> Ver</a>
-												<a href="edicion.jsp?id=1&page=club&submenu=01" class="btn btn-sm"><i class="fa fa-edit"></i> Editar</a>
-												<a href="" class="btn btn-sm"><i class="fa fa-trash-o"></i> Eliminar</a>
-											</td>
-										</tr>
+										<c:if test="${not empty clubs}">
+											<c:forEach var="club" items="${clubs}">
+												<tr>
+													<td>${club.nombre}</td>
+													<td>
+														<a href="detalle.jsp?id=${club.id}&page=club&submenu=01" class="btn btn-sm"><i class="fa fa-eye"></i> <spring:message code="texto.accion.ver"/></a>
+														<a href="edicion.jsp?id=${club.id}&page=club&submenu=01" class="btn btn-sm"><i class="fa fa-edit"></i> <spring:message code="texto.accion.editar"/></a>
+														<a href="" class="btn btn-sm"><i class="fa fa-trash-o"></i> <spring:message code="texto.accion.eliminar"/></a>
+													</td>
+												</tr>
+											</c:forEach>
+										</c:if>
 									</tbody>
 
 								</table>

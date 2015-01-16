@@ -1,5 +1,6 @@
 package cabanas.garcia.orienteering.pages.club;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.openqa.selenium.By;
@@ -64,15 +65,17 @@ public class ListadoClubsPage extends OrienteeringPage{
 
 	public List<ClubDto> getResultadoConsulta() {
 		
+		List<ClubDto> clubsDeConsulta = new ArrayList<ClubDto>();
+		
 		// busco el resultado de la consulta
 		WebElement tablaClubs = findById("resultado_consulta"); // Elemento tbody
 		
 		List<WebElement> tdElements = tablaClubs.findElements(By.xpath("tr/td[1]"));
 		for (WebElement tdElement : tdElements) {
-			tdElement.getText();
+			clubsDeConsulta.add(ClubDto.getBuilder().conNombre(tdElement.getText()).build());
 		}
 		
-		return null;
+		return clubsDeConsulta;
 	}
 
 }

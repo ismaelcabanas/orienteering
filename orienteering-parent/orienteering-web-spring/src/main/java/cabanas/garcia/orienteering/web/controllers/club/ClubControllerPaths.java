@@ -6,5 +6,6 @@ public interface ClubControllerPaths {
 	public static final String ALTA = "/admin/clubs/alta";
 	public static final String LISTADO = "/admin/clubs/listado";
 	public static final String CANCELAR = "/admin/clubs/cancelar";
+	public static final String BUSCAR = "/admin/clubs/buscar";
 
 }

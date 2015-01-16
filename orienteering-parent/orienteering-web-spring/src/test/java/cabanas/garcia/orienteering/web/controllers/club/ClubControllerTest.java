@@ -77,18 +77,19 @@ public class ClubControllerTest {
 	}
 	
 	@Test
-	public void crearClub_deberia_dar_de_alta_club(){
+	public void crearClub_deberia_invocar_al_servicio_de_alta_club(){
 		
 		// GIVEN
-		ArgumentCaptor<ClubForm> argClubForm = ArgumentCaptor.forClass(ClubForm.class);
-		ClubForm clubForm = ClubForm.getBuilder().build();
+		ClubForm clubForm = ClubForm.getBuilder().conNombre("pepe").build();
 		
 		// WHEN
 		controller.crearClub(clubForm, mockModel);
 		
 		// THEN
+		ArgumentCaptor<ClubForm> argClubForm = ArgumentCaptor.forClass(ClubForm.class);		
 		verify(mockClubServicio, times(1)).alta(argClubForm.capture());
 		
+		assertThat(argClubForm.getValue().getNombre(), is(equalTo("pepe")));
 	}
 	
 	@Test
