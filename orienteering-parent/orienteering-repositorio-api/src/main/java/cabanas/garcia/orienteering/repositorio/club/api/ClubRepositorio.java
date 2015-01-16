@@ -1,6 +1,7 @@
 package cabanas.garcia.orienteering.repositorio.club.api;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 import cabanas.garcia.orienteering.modelo.club.Club;
@@ -14,6 +15,6 @@ import cabanas.garcia.orienteering.modelo.club.Club;
  *
  */
 @Repository
-public interface ClubRepositorio extends JpaRepository<Club, Long>{
+public interface ClubRepositorio extends JpaRepository<Club, Long>, JpaSpecificationExecutor<Club>{
 
 }
