@@ -64,4 +64,5 @@ public class ClubDtoAssert extends GenericAssert<ClubDtoAssert, ClubDto> {
 		return this;
 		
 	}
+	
 }

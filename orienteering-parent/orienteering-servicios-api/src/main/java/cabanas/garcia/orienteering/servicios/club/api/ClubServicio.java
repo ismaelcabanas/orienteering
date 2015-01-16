@@ -5,6 +5,7 @@ import java.util.Collection;
 import cabanas.garcia.orienteering.dtos.club.ClubBusquedaForm;
 import cabanas.garcia.orienteering.dtos.club.ClubDto;
 import cabanas.garcia.orienteering.dtos.club.ClubForm;
+import cabanas.garcia.orienteering.servicios.club.exceptions.ClubNoExisteException;
 
 /**
  * Declara los m�todos utilizados para obtener y modificar la informaci�n de un Club de orientaci�n.
@@ -39,8 +40,10 @@ public interface ClubServicio {
 	 * 
 	 * @param id
 	 * @return
+	 * @throws ClubNoExisteException 
+	 * 		Si no existe un club en el repositorio con el identificador proporcionado.
 	 */
-	ClubDto buscarPorId(Long id);
+	ClubDto buscarPorId(Long id) throws ClubNoExisteException;
 
 	/**
 	 * Servicio que actualiza un club de orientación con los nuevos datos del club proporcionada por <code>clubForm</code>.

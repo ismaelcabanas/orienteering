@@ -1,18 +1,33 @@
 package cabanas.garcia.orienteering.club.servicios.impl;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
+import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.ExpectedDatabase;
+import com.github.springtestdbunit.assertion.DatabaseAssertionMode;
+
 import cabanas.garcia.orienteering.assertions.ClubDtoAssert;
+import cabanas.garcia.orienteering.assertions.CollectionClubDtoAssert;
+import cabanas.garcia.orienteering.dtos.club.ClubBusquedaForm;
 import cabanas.garcia.orienteering.dtos.club.ClubDto;
 import cabanas.garcia.orienteering.dtos.club.ClubForm;
 import cabanas.garcia.orienteering.modelo.club.Club;
 import cabanas.garcia.orienteering.servicios.club.api.ClubServicio;
+import cabanas.garcia.orienteering.servicios.club.exceptions.ClubNoExisteException;
 import cabanas.garcia.orienteering.servicios.club.impl.ClubServicioImpl;
 
 /**
@@ -28,10 +43,16 @@ import cabanas.garcia.orienteering.servicios.club.impl.ClubServicioImpl;
 		"classpath:/META-INF/spring/applicationContext-persistence.xml"})
 @Transactional
 @TransactionConfiguration(defaultRollback = true)
+@TestExecutionListeners({DependencyInjectionTestExecutionListener.class,
+    DirtiesContextTestExecutionListener.class,
+    TransactionalTestExecutionListener.class,
+    DbUnitTestExecutionListener.class})
 public class ITClubServicioImpl {
 
 	private static final String NOMBRE_CLUB = "un club";
 	private static final String OTRO_NOMBRE_CLUB = "OTRO NOMBRE CLUB";
+	private static final String CAMPO_BUSQUEDA_NOMBRE_LIKE = "club";
+	private static final String CAMPO_BUSQUEDA_NOMBRE_LIKE_SIN_RESULTADOS = "XXXX";
 	
 	@Autowired
 	private ClubServicio clubServicio;
@@ -42,7 +63,8 @@ public class ITClubServicioImpl {
 	 * @throws Exception
 	 */
 	@Test
-	public void dado_los_datos_de_un_club_cuando_se_da_de_alta_entonces_se_persiste_el_club_en_el_sistema_con_la_informacion_del_club() throws Exception {
+	@DatabaseSetup("clubs-test-creacion.xml")
+	public void alta_de_un_club() throws Exception {
 
 		// GIVEN
 		ClubForm clubForm = new ClubForm.Builder()
@@ -53,7 +75,8 @@ public class ITClubServicioImpl {
 		ClubDto clubPersistido = clubServicio.alta(clubForm);
 
 		// THEN
-		ClubDtoAssert.assertThat(clubPersistido)
+		ClubDto _clubPersisido = clubServicio.buscarPorId(clubPersistido.getId());
+		ClubDtoAssert.assertThat(_clubPersisido)
 			.tieneNombre(NOMBRE_CLUB)
 			.tieneIdNoNulo();
 				
@@ -81,6 +104,71 @@ public class ITClubServicioImpl {
 			.tieneId(dto.getId());
 				
 	}	
+	
+	@Test
+	@DatabaseSetup("clubs-test-listado.xml")
+	public void buscar_por_nombre_cuando_existen_clubs_que_coinciden_con_criterios_de_busqueda(){
+		
+		// GIVEN 		
+		ClubBusquedaForm busquedaForm = ClubBusquedaForm.getBuilder().conNombre(CAMPO_BUSQUEDA_NOMBRE_LIKE).build();
+		Collection<ClubDto> clubsEsperados = new ArrayList<ClubDto>();
+		clubsEsperados.add(ClubDto.getBuilder().conId(999).conNombre("CLUB 999").build());
+		clubsEsperados.add(ClubDto.getBuilder().conId(998).conNombre("Club Escondite Madrid").build());
+		
+		// WHEN 
+		Collection<ClubDto> actual = clubServicio.buscar(busquedaForm);
+		
+		// THEN
+		CollectionClubDtoAssert.assertThat(actual).tieneLosClubs(clubsEsperados);
+		
+	}
+	
+	@Test
+	@DatabaseSetup("clubs-test-listado.xml")
+	public void buscar_por_nombre_cuando_no_existen_clubs_que_coinciden_con_criterios_de_busqueda(){
+		
+		// GIVEN 		
+		ClubBusquedaForm busquedaForm = ClubBusquedaForm.getBuilder().conNombre(CAMPO_BUSQUEDA_NOMBRE_LIKE_SIN_RESULTADOS).build();
+		Collection<ClubDto> clubsEsperados = new ArrayList<ClubDto>();
+		
+		// WHEN 
+		Collection<ClubDto> actual = clubServicio.buscar(busquedaForm);
+		
+		// THEN
+		CollectionClubDtoAssert.assertThat(actual).tieneLosClubs(clubsEsperados);
+		
+	}
+	
+	@Test
+	@DatabaseSetup("clubs-test-listado.xml")
+	public void buscarPorId_cuando_existe_club_en_repositorio() throws Exception{
+		
+		// GIVEN
+		Long id = 999L;
+		
+		// WHEN
+		ClubDto actual = clubServicio.buscarPorId(id);
+		
+		// THEN
+		ClubDtoAssert.assertThat(actual)
+			.tieneId(id)
+			.tieneNombre("CLUB 999");
+		
+	}
+	
+	@Test(expected=ClubNoExisteException.class)
+	@DatabaseSetup("clubs-test-listado.xml")
+	public void buscarPorId_cuando_no_existe_club_en_repositorio() throws Exception{
+		
+		// GIVEN
+		Long id = 99999L;
+		
+		// WHEN
+		ClubDto actual = clubServicio.buscarPorId(id);
+		
+		// THEN
+		
+	}
 	
 //	/**
 //	 * Este test comprueba que no se persiste una instancia de la entidad {@link Club} si no se establecen los campos 
