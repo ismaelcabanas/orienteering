@@ -34,28 +34,11 @@ public class AltasFixture extends GestionClubsFixture {
 
 	private ListadoClubsPage listadoClubsPage;
 	private AltaClubPage altaClubPage;
-
-	@Before
-	public void setUp(){
-		
-		inicializaDriver();
-		
-	}
-
 	
-	@After
-	public void tearDown(){
+	public ListadoClubsPage navegaListadoClubs(){
 		
-		cierraDriver();
-		
-	}
-
-	
-	public ListadoClubsPage listadoClubs(){
-		
-		// se simula el acceso a la página de listado de clubs de orientación
 		listadoClubsPage = navega(URI_BASE + "/admin/clubs/listado", ListadoClubsPage.class);
-
+		
 		return listadoClubsPage;
 		
 	}
@@ -69,11 +52,23 @@ public class AltasFixture extends GestionClubsFixture {
 		
 	}
 	
-	public void rellenaDatosClub(){
-		
-		altaClubPage.rellenaFormulario("Un Nombre");
+	public void rellenarFormulario(String nombre){
+
+		// relleno el formulario
+		altaClubPage.rellenaFormulario(nombre);
 		
 	}
+	
+	public ListadoClubsPage buscar(String nombre){
+		
+		// relleno los campos del formulario de búsqueda
+		listadoClubsPage.rellenaFormularioBusqueda(nombre);
+		
+		// realizo la búsqueda
+		listadoClubsPage.buscar();
+		
+		return listadoClubsPage;
+	}	
 	
 	public ListadoClubsPage crearClub(String nombre){
 		

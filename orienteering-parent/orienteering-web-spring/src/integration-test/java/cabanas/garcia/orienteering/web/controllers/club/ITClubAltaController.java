@@ -5,7 +5,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.forwardedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
 import static org.mockito.Mockito.*;
 
 import org.junit.Before;
@@ -58,7 +58,7 @@ import cabanas.garcia.orienteering.web.util.mensaje.MensajeUsuario;
     TransactionalTestExecutionListener.class,
     DbUnitTestExecutionListener.class })
 @DbUnitConfiguration(dataSetLoader = ColumnSensingFlatXMLDataSetLoader.class)
-public class ITClubController {
+public class ITClubAltaController {
 
 	// La interface mock que se utiliza para enviar peticiones simuladas
 	private MockMvc mockMvc;
@@ -74,22 +74,7 @@ public class ITClubController {
 		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
 				.build(); //.standaloneSetup(clubController).build();
 	}
-	
-	@Test
-	@DatabaseSetup("clubs.xml")
-	@ExpectedDatabase(value="clubs.xml", assertionMode=DatabaseAssertionMode.NON_STRICT)
-	public void la_peticion_de_nuevo_club_deberia_devolver_la_vista_del_formulario_de_alta_de_club() throws Exception {
-
-		// envío una petición GET para obtener el formulario de alta de club y compruebo el resultado de la petición
-		mockMvc.perform(get(ClubControllerPaths.NUEVO)
-				.contentType(MediaType.TEXT_HTML))
-				.andExpect(status().isOk())
-				.andExpect(view().name(ClubController.VISTA_ADMIN_CLUBS_NUEVO))
-				.andExpect(forwardedUrl("/WEB-INF/jsp/" + ClubController.VISTA_ADMIN_CLUBS_NUEVO + ".jsp"))
-				.andReturn();
-				
-	}
-	
+		
 	@Test	
 	@DatabaseSetup("clubs.xml")
 	@ExpectedDatabase(value="clubs-alta-esperado.xml", assertionMode=DatabaseAssertionMode.NON_STRICT)
@@ -100,7 +85,7 @@ public class ITClubController {
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.param(ConstantesWebTest.CAMPO_FORM_ALTA_NOMBRE, "testClub");
 		
-		MensajeUsuario mensajeUsuarioEsperado = new MensajeUsuario("texto.accion.crear");
+		MensajeUsuario mensajeUsuarioEsperado = new MensajeUsuario("texto.accion.alta");
 		
 		// WHEN
 		ResultActions respuestaAlta = mockMvc.perform(peticionAltaClub);
@@ -110,23 +95,9 @@ public class ITClubController {
 				.andExpect(status().isOk())
 				.andExpect(view().name(ClubController.VISTA_ADMIN_CLUBS_LISTADO))
 				.andExpect(forwardedUrl("/WEB-INF/jsp/" + ClubController.VISTA_ADMIN_CLUBS_LISTADO + ".jsp"))
-				.andExpect(model().attribute("mensaje", mensajeUsuarioEsperado))
-				;
+				.andExpect(request().attribute(ClubController.REQUEST_ATTRIBUTE_MENSAJE, mensajeUsuarioEsperado));
 				//.andExpect(model().attribute("listado", Matchers.anyCollectionOf(ClubDto.class)));
 		
 	}
 	
-	@Test
-	@DatabaseSetup("clubs.xml")
-	@ExpectedDatabase(value="clubs.xml", assertionMode=DatabaseAssertionMode.NON_STRICT)
-	public void la_peticion_de_cancelacion_de_alta_de_club_deberia_devolver_la_vista_de_listado_de_clubs() throws Exception{
-		
-		mockMvc.perform(get(ClubControllerPaths.CANCELAR)
-				.contentType(MediaType.TEXT_HTML))
-				.andExpect(status().isOk())
-				.andExpect(view().name(ClubController.VISTA_ADMIN_CLUBS_LISTADO))
-				.andExpect(forwardedUrl("/WEB-INF/jsp/" + ClubController.VISTA_ADMIN_CLUBS_LISTADO + ".jsp"))
-				.andExpect(model().attribute("mensaje", new MensajeUsuario("texto.accion.cancelar")))
-				.andReturn();
-	}
 }

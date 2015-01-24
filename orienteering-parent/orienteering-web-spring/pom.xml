@@ -36,7 +36,12 @@
   				
   				<database.groupId>hsqldb</database.groupId>
   				<database.artifactId>hsqldb</database.artifactId>
-  				<database.version>${hsqldb.version}</database.version> 				  				
+  				<database.version>${hsqldb.version}</database.version>
+  				<!-- 
+  				<database.groupId>com.h2database</database.groupId>
+				<database.artifactId>h2</database.artifactId>
+				<database.version>${h2.version}</database.version> 				  				
+  				-->
   			</properties>
   			
   			<build>
@@ -176,6 +181,11 @@
 								<artifactId>hsqldb</artifactId>
 								<version>${hsqldb.version}</version>
 							</dependency>
+							<dependency>
+								<groupId>com.h2database</groupId>
+								<artifactId>h2</artifactId>
+								<version>${h2.version}</version>
+							</dependency>
 						</dependencies>
 					</plugin>
 					
@@ -206,6 +216,11 @@
 								<groupId>hsqldb</groupId>
 								<artifactId>hsqldb</artifactId>
 								<version>${hsqldb.version}</version>
+							</dependency>
+							<dependency>
+								<groupId>com.h2database</groupId>
+								<artifactId>h2</artifactId>
+								<version>${h2.version}</version>
 							</dependency>
 						</dependencies>
 					</plugin>
@@ -694,6 +709,13 @@
 		<version>${database.version}</version>
 		<scope>runtime</scope>
 	</dependency>	
+	<!-- Necesito esta librería para probar los tests de aceptación mientras estoy desarrollando -->
+	<dependency>
+		<groupId>com.h2database</groupId>
+		<artifactId>h2</artifactId>
+		<version>${h2.version}</version>
+		<scope>runtime</scope>
+	</dependency>
 	
 	<!-- Concordion y Selenium dependencies -->       
     <dependency>

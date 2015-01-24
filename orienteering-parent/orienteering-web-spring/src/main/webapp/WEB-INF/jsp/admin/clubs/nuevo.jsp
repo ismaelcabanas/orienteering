@@ -36,7 +36,7 @@
 
 							<i class="fa fa-home"></i>
 
-							<a href="${pageContext.servletContext.contextPath}/index.jsp">Home</a>
+							<a href="${pageContext.servletContext.contextPath}/index.jsp"><spring:message code="miga.home"/></a>
 
 							<i class="fa fa-angle-right"></i>
 
@@ -44,7 +44,7 @@
 
 						<li>
 
-							<a href="#">Clubes</a>
+							<a href="#"><spring:message code="miga.club.listado"/></a>
 
 							<i class="fa fa-angle-right"></i>
 
@@ -52,7 +52,7 @@
 
 						<li>
 
-							<a href="#">Nuevo club</a>
+							<a href="#"><spring:message code="miga.club.alta"/></a>
 
 						</li>
 
@@ -166,7 +166,7 @@
 												 
 												<div class="form-group">
 
-													<label class="control-label">Nombre</label>
+													<label class="control-label"><spring:message code="club.nombre.label"/></label>
 
 													<form:input id="txtNombre" path="nombre" class="form-control" placeholder="Nombre del club" />
 
@@ -230,9 +230,9 @@
 
 														<div class="col-md-offset-3 col-md-9">
 
-															<button id="btnCrear" type="submit" class="btn green-meadow">Crear</button>
+															<button id="btnCrear" type="submit" class="btn green-meadow"><spring:message code="texto.boton.alta"/></button>
 															
-															<a id="btnCancelar" href="${pageContext.servletContext.contextPath}/admin/clubs/cancelar" class="btn default">Cancelar</a>
+															<a id="btnCancelar" href="${pageContext.servletContext.contextPath}/admin/clubs/cancelar" class="btn default"><spring:message code="texto.boton.cancelar"/></a>
 															
 														</div>
 

@@ -1,8 +1,12 @@
 package cabanas.garcia.orienteering.web.controllers.club;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 import java.util.ArrayList;
@@ -70,7 +74,6 @@ public class ClubBuscarControllerTest {
 		
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Test
 	public void buscar_deberia_establecer_en_model_la_lista_de_clubs_que_coinciden_con_criterio_busqueda(){
 		
@@ -93,7 +96,7 @@ public class ClubBuscarControllerTest {
 		
 		verify(mockModel, times(1)).addAttribute(anyString(), argListadoClubs.capture());
 		
-		assertThat(argListadoClubs.getValue(), hasItems(clubDtoEsperado1, clubDtoEsperado2));
+		assertThat((Collection<ClubDto>)argListadoClubs.getValue(), containsInAnyOrder(clubDtoEsperado1, clubDtoEsperado2));
 		
 	}
 }

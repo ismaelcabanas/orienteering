@@ -160,9 +160,9 @@
 												<tr>
 													<td>${club.nombre}</td>
 													<td>
-														<a href="detalle.jsp?id=${club.id}&page=club&submenu=01" class="btn btn-sm"><i class="fa fa-eye"></i> <spring:message code="texto.accion.ver"/></a>
-														<a href="edicion.jsp?id=${club.id}&page=club&submenu=01" class="btn btn-sm"><i class="fa fa-edit"></i> <spring:message code="texto.accion.editar"/></a>
-														<a href="" class="btn btn-sm"><i class="fa fa-trash-o"></i> <spring:message code="texto.accion.eliminar"/></a>
+														<a id="detLinkClub${club.id}" href="${pageContext.servletContext.contextPath}/admin/clubs/detalle?id=${club.id}&page=club&submenu=01" class="btn btn-sm"><i class="fa fa-eye"></i> <spring:message code="texto.boton.ver"/></a>
+														<a id="edtLinkClub${club.id}" href="${pageContext.servletContext.contextPath}/admin/clubs/edicion?id=${club.id}&page=club&submenu=01" class="btn btn-sm"><i class="fa fa-edit"></i> <spring:message code="texto.boton.editar"/></a>
+														<a href="" class="btn btn-sm"><i class="fa fa-trash-o"></i> <spring:message code="texto.boton.eliminar"/></a>
 													</td>
 												</tr>
 											</c:forEach>

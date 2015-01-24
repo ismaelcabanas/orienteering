@@ -78,4 +78,28 @@ public class ListadoClubsPage extends OrienteeringPage{
 		return clubsDeConsulta;
 	}
 
+	public EdicionClubPage editar(String id) {
+		
+		String idLinkEdicion = "edtLinkClub" + id;
+		
+		WebElement linkEdicionClubSeleccionado = findById(idLinkEdicion);
+		
+		linkEdicionClubSeleccionado.click();
+		
+		return new EdicionClubPage(driver);
+		
+	}
+
+	public DetalleClubPage ver(String id) {
+		
+		String idLinkDetalle = "detLinkClub" + id;
+		
+		WebElement linkEdicionClubSeleccionado = findById(idLinkDetalle);
+		
+		linkEdicionClubSeleccionado.click();
+		
+		return new DetalleClubPage(driver);
+		
+	}
+
 }

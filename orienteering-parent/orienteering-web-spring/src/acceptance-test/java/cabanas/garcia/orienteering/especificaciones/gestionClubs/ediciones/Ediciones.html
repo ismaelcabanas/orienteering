@@ -4,20 +4,22 @@
 
     <head>
         <link href="../concordion.css" rel="stylesheet" type="text/css" />
-        <TITLE>Funcionalidad de la modificación de clubs de orientación</TITLE>
+        <TITLE>Funcionalidad de la edición y modificación de clubs de orientación</TITLE>
     </head>
 
     <body>
 
-        <h1>Funcionalidad de la modificación de clubs de orientación</h1>
+        <h1>Funcionalidad de la edición y modificación de clubs de orientación</h1>
 		
 		<p>
 			Se requiere que un usuario pueda modificar los datos de un club de orientación a través de un formulario web.
 		</p>
 		<p>	
-			El usuario podrá seleccionar el club que desea modificar, accederá a un formulario editable con 
-			los datos del club, modificará la información del club que crea conveniente, y podrá actualizar 
-			la nueva información del club mediante un botón/link.
+			El usuario utilizará el formulario de búsqueda de clubs de orientación para buscar el club 
+			de orientación que desea editar. Si encuentra el club de orientación, accederá al formulario 
+			de edición del club de orientación donde se le mostrará los datos del club. Hará las modificaciones 
+			que crea conveniente sobre el formulario y actualizará la información del club pinchando sobre el 
+			botón/link de <i>Actualizar</i>.
 		</p> 
 		<p>
 			En el caso que el proceso de actualización del club tenga éxito, se mostrará 
@@ -35,49 +37,154 @@
 		</p>        	
       <div class="example">
             <h3>Actualización de un club de orientación</h3>
-                
-            <p concordion:execute="#idClubSeleccionado = preparaTest(#nombre)">    	
-            	Dado un usuario que selecciona el club <b concordion:set="#nombre">Rumbo Madrid Sanse</b> para modificar sus datos, 
-            	el sistema <span concordion:execute="#edicionPage = editaClub(#idClubSeleccionado)">dirige al usuario</span> 
-            	a la página de <span concordion:assertEquals="#edicionPage.getTitulo()">Edición de clubs de orientación</span>
-            	en la que aparece los siguientes datos del club:
-            	<table>	
-            		<tr>
-	            		<th>Campo</th>
-	            		<th>Valor</th>
-	            	</tr>
-	            	<tr>
-	            		<td>Nombre</td>
-	            		<td concordion:assertEquals="#edicionPage.getNombre">Rumbo Madrid Sanse</td>
-	            	</tr>
-            	</table>
-            </p>
-            <p>	
-                si modifica el nombre del club a <b concordion:set="#nuevoNombre">Madrid Rumbo Sanse</b> y                          
-                pulsa sobre el botón de <b concordion:execute="#listadoPage = actualizarClub()">Actualizar</b>
+            
+            <p>    	
+            	Dado un usuario que, pulsando sobre el <i concordion:execute="#listadoPage = navegaListadoClubs()">link de gestión de clubs</i> del menú,  accede a la página de <span concordion:assertEquals="#listadoPage.getTitulo()">Listado de clubs de orientación</span>.
             </p>
             <p>
-                el sistema redirige al usuario a la página de <span concordion:assertEquals="#listadoPage.getTitulo()">Listado de clubs de orientación</span> e
-                informa que <b concordion:assertEquals="#listadoPage.getMensaje()">El registro se ha actualizado correctamente</b>.             
-            </p>    
+            	El usuario realiza una búsqueda del club <b concordion:set="#nombre">Escondite</b> y 
+            	
+            	el <span concordion:execute="#listadoPage = buscar(#nombre)">sistema devuelve como resultado el club</span>             	            
+            	
+            	<table>
+            		<tr>
+            			<th>Id</th>
+			        	<th>Nombre</th>
+			        </tr>
+            		<tr>
+            			<td concordion:set="#id">998</td>
+            			<td>Club Escondite Madrid</td>
+            		</tr>
+            	</table>
+            </p>
+            <p>
+            	<span style="visibility: hidden;" concordion:set="#id">998</span>
+            	El usuario <span concordion:execute="#edicionPage = navegaEdicionClubs(#id)">pincha sobre el link Editar</span> del club y 
+            	
+            	el sistema le redirige al formulario de edición de la página de <span concordion:assertEquals="#edicionPage.getTitulo()">Edición de clubs de orientación</span>
+            	
+            	con la siguiente información del club
+            	
+            	<table>
+            		<tr>
+            			<th>Nombre</th>
+			        </tr>
+            		<tr>
+            			<td concordion:assertEquals="#edicionPage.nombreDelClub()">Club Escondite Madrid</td>
+            		</tr>
+            	</table>
+            </p>
+            <p>
+            	El usuario actualiza la siguiente información del club:
+            	<table>
+                	<tr><th>Campo</th><th>Valor</th></tr>
+                	<tr>
+                		<td>Nombre</td><td concordion:set="#nuevoNombre">Club Escondite Toledo</td>
+                	</tr>
+                </table>
+                <span concordion:execute="rellenarFormulario(#nuevoNombre)"></span>
+            </p>
+            <p>
+            	Cuando el usuario termina de modificar los datos del club, pulsa sobre el botón/link <b><i concordion:execute="#listadoPage = actualizar()">Actualizar</i></b> 
+            	
+            	y el sistema redirige al usuario a la página de <span concordion:assertEquals="#listadoPage.getTitulo()">Listado de clubs de orientación</span> e
+                
+                informa que <b concordion:assertEquals="#listadoPage.getMensaje()">El registro se ha actualizado correctamente</b>.
+                             	
+            </p>
+            
+            <p>
+            	Si el usuario <b concordion:execute="#listadoPage = navegaListadoClubs()">navega al listado de clubs</b> y realiza una búsqueda de clubs por el nombre <b concordion:set="#nombreBusqueda">Escondite</b>,
+            	 
+            	el sistema <span concordion:execute="#listadoPage = buscar(#nombreBusqueda)"></span> devolverá como
+            	 
+            	resultado el siguiente listado de clubs
+            	
+            	<table concordion:verifyRows="#club : #listadoPage.getResultadoConsulta()">
+            		<tr>
+			        	<th concordion:assertEquals="#club.nombre">Nombre</th>
+			        </tr>
+			        <tr>
+			        	<td>Club Escondite Toledo</td>
+			        </tr>
+			    </table>
+            </p>
+                   
         </div>
          
         <div class="example">
             <h3>Cancelación de la actualización de un club de orientación</h3>
-             
+            
             <p>    	
-            	Dado un usuario que selecciona el club <b concordion:set="#nombre">Rumbo Madrid Sanse</b> para modificar sus datos, 
-            	el sistema dirige al usuario 
-            	a la página de <span concordion:assertEquals="#edicionPage.getTitulo()">Edición de clubs de orientación</span>
-            	en la que aparece el campo <b>Nombre</b> con el valor <span concordion:assertEquals="#edicionPage.getNombre()">Rumbo Madrid Sanse</span>.
-            </p>    
-            <p> 
-            	si, después de modificar algún dato, pulsa sobre el botón de <b concordion:execute="#listadoPage = cancelar()">Cancelar</b>
+            	Dado un usuario que, pulsando sobre el <i concordion:execute="#listadoPage = navegaListadoClubs()">link de gestión de clubs</i> del menú,  accede a la página de <span concordion:assertEquals="#listadoPage.getTitulo()">Listado de clubs de orientación</span>.
             </p>
             <p>
-                el sistema redirige al usuario a la página de <span concordion:assertEquals="#listadoPage.getTitulo()">Listado de clubs de orientación</span> e
-                informa que <b concordion:assertEquals="#listadoPage.getMensaje()">Se ha cancelado la operación</b>.       
-            </p>    
+            	El usuario realiza una búsqueda del club <b concordion:set="#nombre">PEPE</b> y el sistema devuelve como resultado el club 
+            	
+            	<span concordion:execute="buscar(#nombre)"></span> 
+            	
+            	<table>
+            		<tr>
+            			<th>Id</th>
+            			<th>Nombre</th>
+            		</tr>
+            		<tr>
+            			<td concordion:set="#id">999</td>
+            			<td>Club Pepe</td>
+            		</tr>
+            	</table>
+            </p>
+            <p>
+            	El usuario edita la información del club pinchando sobre el <span concordion:execute="#edicionPage = navegaEdicionClubs(#id)">link Editar</span> del club y 
+            	
+            	el sistema le redirige al formulario de edición de la página de <span concordion:assertEquals="#edicionPage.getTitulo()">Edición de clubs de orientación</span>
+            	
+            	con la siguiente información del club
+            	
+            	<table>
+            		<tr>
+            			<th>Nombre</th>
+			        </tr>
+            		<tr>
+            			<td concordion:assertEquals="#edicionPage.nombreDelClub()">Club Escondite Madrid</td>
+            		</tr>
+            	</table>
+            </p>
+            <p>
+            	El usuario actualiza la siguiente información del club en el formulario:
+            	<table>
+                	<tr><th>Campo</th><th>Valor</th></tr>
+                	<tr>
+                		<td>Nombre</td><td concordion:set="#nuevoNombre">Otro Club 999</td>
+                	</tr>
+                </table>
+                <span concordion:execute="rellenarFormulario(#nuevoNombre)"></span>
+            </p>
+            <p>
+            	Pero el usuario decide pulsar sobre el botón/link <b><i concordion:execute="#listadoPage = cancelar()">Cancelar</i></b> 
+            	
+            	y el sistema redirige al usuario a la página de <span concordion:assertEquals="#listadoPage.getTitulo()">Listado de clubs de orientación</span> e
+                
+                informa que <b concordion:assertEquals="#listadoPage.getMensaje()">Se ha cancelado la operación</b>.
+                             	
+            </p>
+            
+            <p>
+            	Si el usuario <b concordion:execute="#listadoPage = navegaListadoClubs()">navega al listado de clubs</b> y realiza una búsqueda de clubs por el nombre <b concordion:set="#nombreBusqueda">Pepe</b>, 
+            	
+            	el sistema <span concordion:execute="#listadoPage = buscar(#nombreBusqueda)"></span> devolverá como 
+            	
+            	resultado el siguiente listado de clubs
+            	
+            	<table concordion:verifyRows="#club : #listadoPage.getResultadoConsulta()">
+            		<tr>
+			        	<th concordion:assertEquals="#club.nombre">Nombre</th>
+			        </tr>
+			        <tr>
+			        	<td>Club Pepe</td>
+			        </tr>
+			    </table>
+            </p>     
         </div>
         
 <!--                          

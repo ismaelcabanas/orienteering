@@ -35,37 +35,83 @@
 		</p>        	
       <div class="example">
             <h3>Alta de un club de orientación</h3>
-                
+            
             <p>    	
-            	Dado un usuario, que pulsando sobre el <i concordion:execute="#listadoPage = listadoClubs()">link de gestión de clubs</i> del menú, accede a la página de <span concordion:assertEquals="#listadoPage.getTitulo()">Listado de clubs de orientación</span>,
-                pulsa sobre el botón <b concordion:execute="#altaPage = nuevoClub()">Nuevo club</b>, y el sistema dirige al usuario a la página de <span concordion:assertEquals="#altaPage.getTitulo()">Alta de clubs de orientación</span>.
+            	Dado un usuario que, pulsando sobre el <i concordion:execute="#listadoPage = navegaListadoClubs()">link de gestión de clubs</i> del menú,  accede a la página de <span concordion:assertEquals="#listadoPage.getTitulo()">Listado de clubs de orientación</span>.
+            </p>   
+                                     <p>
+            	El usuario pulsa sobre el botón <b concordion:execute="#altaPage = nuevoClub()">Nuevo club</b> 
+            	
+            	y el sistema dirige al usuario a la página de <span concordion:assertEquals="#altaPage.getTitulo()">Alta de clubs de orientación</span>.
             </p>
+            
             <p>
                 El usuario rellena el formulario de alta con la siguiente información:
                 <table>
                 	<tr><th>Campo</th><th>Valor</th></tr>
                 	<tr>
-                		<td>Nombre</td><td concordion:set="#nombre">Club Rumbo</td>
+                		<td>Nombre</td><td concordion:set="#nombre">Rumbo</td>
                 	</tr>
                 </table>
             </p>
             <p>
-                Cuando pulsa sobre el botón de <b concordion:execute="#listadoPage = crearClub(#nombre)">Crear club</b> y <br/>
+            	Cuando el usuario termina de modificar los datos del club, pulsa sobre el botón de <b concordion:execute="#listadoPage = crearClub(#nombre)">Alta</b> y <br/>
+                
                 el sistema redirige al usuario a la página de <span concordion:assertEquals="#listadoPage.getTitulo()">Listado de clubs de orientación</span> e
+                
                 informa que <b concordion:assertEquals="#listadoPage.getMensaje()">El registro se ha dado de alta correctamente</b>.             
             </p>    
+            
+            <p>
+            	Si el usuario <b concordion:execute="#listadoPage = navegaListadoClubs()">navega al listado de clubs</b> y realiza una búsqueda de clubs por el nombre <b concordion:set="#nombreBusqueda">Rumbo</b>,
+            	 
+            	el sistema <span concordion:execute="#listadoPage = buscar(#nombreBusqueda)"></span> devolverá como
+            	 
+            	resultado el siguiente listado de clubs
+            	
+            	<table concordion:verifyRows="#club : #listadoPage.getResultadoConsulta()">
+            		<tr>
+			        	<th concordion:assertEquals="#club.nombre">Nombre</th>
+			        </tr>
+			        <tr>
+			        	<td>Rumbo</td>
+			        </tr>
+			    </table>
+            </p>
         </div>
         
         <div class="example">
             <h3>Cancelación del alta de un club de orientación</h3>
-                
+                            
             <p>    	
-            	Dado un usuario, que accede al formulario de alta de un club a través del menú, pulsando sobre el <i concordion:execute="#listadoPage = listadoClubs()">link de gestión de clubs</i>, accediendo a la página de <span concordion:assertEquals="#listadoPage.getTitulo()">Listado de clubs de orientación</span>,<br/>
-                pulsa sobre el botón <b concordion:execute="#altaPage = nuevoClub()">Nuevo club</b> y el sistema dirige al usuario a la página de <span concordion:assertEquals="#altaPage.getTitulo()">Alta de clubs de orientación</span>,<br/>
-                pulsa sobre el botón de <b concordion:execute="#listadoPage = cancelar()">Cancelar</b> y <br/>
-                el sistema redirige al usuario a la página de <span concordion:assertEquals="#listadoPage.getTitulo()">Listado de clubs de orientación</span> e
-                informa que <b concordion:assertEquals="#listadoPage.getMensaje()">Se ha cancelado la operación</b>.       
-            </p>    
+            	Dado un usuario que, pulsando sobre el <i concordion:execute="#listadoPage = navegaListadoClubs()">link de gestión de clubs</i> del menú,  accede a la página de <span concordion:assertEquals="#listadoPage.getTitulo()">Listado de clubs de orientación</span>.
+            </p>
+            
+            <p>
+            	El usuario pulsa sobre el botón <b concordion:execute="#altaPage = nuevoClub()">Nuevo club</b> 
+            	
+            	y el sistema dirige al usuario a la página de <span concordion:assertEquals="#altaPage.getTitulo()">Alta de clubs de orientación</span>.
+            </p>
+           
+            <p>
+            	El usuario rellena cierta información del club en el formulario:
+            	<table>
+                	<tr><th>Campo</th><th>Valor</th></tr>
+                	<tr>
+                		<td>Nombre</td><td concordion:set="#nuevoNombre">Otro Club 999</td>
+                	</tr>
+                </table>
+                <span concordion:execute="rellenarFormulario(#nuevoNombre)"></span>
+            </p>
+            <p>
+            	Pero el usuario decide pulsar sobre el botón/link <b><i concordion:execute="#listadoPage = cancelar()">Cancelar</i></b> 
+            	
+            	y el sistema redirige al usuario a la página de <span concordion:assertEquals="#listadoPage.getTitulo()">Listado de clubs de orientación</span> e
+                
+                informa que <b concordion:assertEquals="#listadoPage.getMensaje()">Se ha cancelado la operación</b>.
+                             	
+            </p>
+                                    
         </div>
 <!--                          
         <h2>Escenarios alternativos</h2>
