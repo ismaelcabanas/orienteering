@@ -70,6 +70,7 @@ public class ClubBuscarControllerTest {
 		
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Test
 	public void buscar_deberia_establecer_en_model_la_lista_de_clubs_que_coinciden_con_criterio_busqueda(){
 		

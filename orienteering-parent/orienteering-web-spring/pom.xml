@@ -17,29 +17,226 @@
 		<web.host>http://localhost:${web.port}</web.host>
 		
 		<perfiles.dir>../perfiles</perfiles.dir>				
-  	
+  		
+  		<database.groupId>hsqldb</database.groupId>
+		<database.artifactId>hsqldb</database.artifactId>
+		<database.version>${hsqldb.version}</database.version>
   	</properties>  
   
   <profiles>
-		<!-- La configuración del perfil de integracion. -->
+  		<profile>
+  			<id>despliegue</id>
+  			<properties>
+  				<!-- Especifica la propiedad build.profile.id que debe coincidir con el nombre 
+					del directorio que contiene el fichero de configuración específica del perfil.
+					Puesto que el fichero de configuración de despliegue se encuentra en la carpeta
+					perfiles/despliegue, el valor de esta propiedad debe ser despliegue. 
+				-->
+  				<build.profile.id>despliegue</build.profile.id> 
+  				
+  				<database.groupId>hsqldb</database.groupId>
+  				<database.artifactId>hsqldb</database.artifactId>
+  				<database.version>${hsqldb.version}</database.version> 				  				
+  			</properties>
+  			
+  			<build>
+  				<plugins>
+  					<!-- Utilizado para generar los esquemas -->
+		      		<plugin>
+			  			<groupId>org.codehaus.mojo</groupId>
+			  			<artifactId>hibernate3-maven-plugin</artifactId>
+			  			<version>2.2</version>
+			  			<executions>
+			  				<execution>		
+			  					<id>Generación esquema ddl CREATE</id>		        	
+					            <phase>process-test-resources</phase>
+					            <goals>
+					              <goal>hbm2ddl</goal>
+					            </goals>
+					            <configuration>
+					  				<components>
+					  					<component>
+					  						<name>hbm2ddl</name>
+					  						<implementation>jpaconfiguration</implementation>
+					  					</component>
+					  				</components>
+					  				<componentProperties>
+					  					<!-- genera sentencias drop -->
+					  					<drop>false</drop>
+					  					<!-- genera sentencias create -->
+					  					<create>true</create>
+					  					<!-- con export=false genera los ddls en el fichero de salida definido -->
+					  					<export>false</export>
+					  					<!-- formatea las sentencias -->
+					  					<format>true</format>
+					  					<!-- nombre de la unidad de persistencia definida en el persistence.xml -->
+					  					<persistenceunit>Orienteering</persistenceunit>
+					  					<!-- path al fichero de propiedades donde se localiza básicamente el dialecto de la base de datos -->
+					  					<propertyfile>../perfiles/${build.profile.id}/config.properties</propertyfile>	
+					  					<!-- nombre del fichero de salida que tendrá las sql generadas -->
+					  					<outputfilename>schema-create-test.sql</outputfilename>	
+					  				</componentProperties>
+					  			</configuration>
+					        </execution>
+					        <execution>		
+			  					<id>Generación esquema ddl DROP</id>		        	
+					            <phase>process-test-resources</phase>
+					            <goals>
+					              <goal>hbm2ddl</goal>
+					            </goals>
+					            <configuration>
+					  				<components>
+					  					<component>
+					  						<name>hbm2ddl</name>
+					  						<implementation>jpaconfiguration</implementation>
+					  					</component>
+					  				</components>
+					  				<componentProperties>
+					  					<!-- genera sentencias drop -->
+					  					<drop>true</drop>
+					  					<!-- genera sentencias create -->
+					  					<create>false</create>
+					  					<!-- con export=false genera los ddls en el fichero de salida definido -->
+					  					<export>false</export>
+					  					<!-- formatea las sentencias -->
+					  					<format>true</format>
+					  					<!-- nombre de la unidad de persistencia definida en el persistence.xml -->
+					  					<persistenceunit>Orienteering</persistenceunit>
+					  					<!-- path al fichero de propiedades donde se localiza básicamente el dialecto de la base de datos -->
+					  					<propertyfile>../perfiles/${build.profile.id}/config.properties</propertyfile>	
+					  					<!-- nombre del fichero de salida que tendrá las sql generadas -->
+					  					<outputfilename>schema-drop-test.sql</outputfilename>	
+					  				</componentProperties>
+					  			</configuration>
+					        </execution>  		        
+			  			</executions>  		  			
+			  			<dependencies>
+			  				<dependency>
+			    				<groupId>org.slf4j</groupId>
+			    				<artifactId>slf4j-api</artifactId>
+			    				<version>${slf4j.version}</version>		
+			    			</dependency>
+			    			<dependency>
+			    				<groupId>org.slf4j</groupId>
+			    				<artifactId>slf4j-simple</artifactId>
+			    				<version>${slf4j.version}</version>		
+			    			</dependency>  	
+			    			<!-- 
+			    			<dependency>
+			  					<groupId>cabanas.garcia.ismael.despensavivienda</groupId>
+			  					<artifactId>despensa-vivienda-modelo-impl</artifactId>
+			  					<version>0.0.1-SNAPSHOT</version> 
+			  				</dependency>
+			  				 -->		  				
+			  			</dependencies>	
+			  		</plugin>
+			  		
+			  		<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>sql-maven-plugin</artifactId>
+						<version>1.5</version>
+						<executions>
+							<execution>
+								<id>Borra la base de datos de integración si estuviera</id>
+								<phase>process-test-resources</phase>		
+								<goals>
+									<goal>execute</goal>
+								</goals>
+								<configuration>
+									<autocommit>true</autocommit>
+									<srcFiles>
+										<srcFile>target/hibernate3/sql/schema-drop-test.sql</srcFile>
+									</srcFiles>	
+									<onError>continue</onError>
+								</configuration>			
+							</execution>
+							<execution>
+								<id>Creación base de datos de integración</id>
+								<phase>process-test-resources</phase>		
+								<goals>
+									<goal>execute</goal>
+								</goals>
+								<configuration>
+									<autocommit>true</autocommit>						
+									<srcFiles>
+										<srcFile>target/hibernate3/sql/schema-create-test.sql</srcFile>
+									</srcFiles>	
+								</configuration>			
+							</execution>													
+						</executions>
+						<configuration>							
+							<driver>${db.driver}</driver>
+							<url>${db.url}</url>
+							<username>${db.username}</username>
+							<password>${db.password}</password>
+						</configuration>			
+						<dependencies>
+							<dependency>
+								<groupId>hsqldb</groupId>
+								<artifactId>hsqldb</artifactId>
+								<version>${hsqldb.version}</version>
+							</dependency>
+						</dependencies>
+					</plugin>
+					
+  					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>dbunit-maven-plugin</artifactId>
+						<version>1.0-beta-3</version>
+						<executions>
+							<execution>
+								<id>Preparación de base de la datos</id>
+								<phase>process-test-resources</phase>
+								<goals>
+									<goal>operation</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<driver>${db.driver}</driver>
+							<url>${db.url}</url>
+							<username>${db.username}</username>
+							<password>${db.password}</password>
+							<format>flat</format>
+							<type>CLEAN_INSERT</type>
+							<src>../perfiles/${build.profile.id}/sql/data/datos.xml</src>
+						</configuration>
+						<dependencies>
+							<dependency>
+								<groupId>hsqldb</groupId>
+								<artifactId>hsqldb</artifactId>
+								<version>${hsqldb.version}</version>
+							</dependency>
+						</dependencies>
+					</plugin>
+  				</plugins>
+  			</build>
+  		</profile>
+  		
+		<!-- La configuración del perfil de test-aceptacion. -->
 		<profile>
 			<id>test-aceptacion</id>
 			<properties>	
 				<!-- Especifica la propiedad build.profile.id que debe coincidir con el nombre 
 					del directorio que contiene el fichero de configuración específica del perfil.
-					Puesto que el fichero de configuración de desarrollo se encuentra en la carpeta
+					Puesto que el fichero de configuración de test-aceptacion se encuentra en la carpeta
 					perfiles/test-aceptacion, el valor de esta propiedad debe ser test-aceptacion. 
 				-->
 				<build.profile.id>test-aceptacion</build.profile.id>
 				
 				<!--
-                Solo se ejecutan tests de integración cuando el perfil de integracion está activo. No se ejecutan test unitarios.
+                Solo se ejecutan tests de integración cuando el perfil de test-aceptacion está activo. No se ejecutan test unitarios.
 	            -->
 	            <skip.acceptance.tests>false</skip.acceptance.tests>
 	            <skip.unit.tests>true</skip.unit.tests>
 	            
-	            <!-- Versión de guava necesaria cuando entre en escena el artefacto selenium-java -->
-	            <guava.version>15.0</guava.version>
+	            <!-- Versión de guava necesaria cuando entre en escena el artefacto selenium-java
+	            <guava.version>15.0</guava.version> -->
+	            <guava.version>r08</guava.version>
+	            
+	            <database.groupId>hsqldb</database.groupId>
+  				<database.artifactId>hsqldb</database.artifactId>
+  				<database.version>${hsqldb.version}</database.version>
 			</properties>
 			
 			<build>
@@ -110,90 +307,7 @@
 					        -->
 					    </executions>
 					</plugin>  	
-					
-			        <!-- Utilizado para generar los esquemas -->   		
-		      		<plugin>
-			  			<groupId>org.codehaus.mojo</groupId>
-			  			<artifactId>hibernate3-maven-plugin</artifactId>
-			  			<version>2.2</version>
-			  			<executions>
-			  				<execution>		
-			  					<id>Generación esquema ddl CREATE</id>		        	
-					            <phase>pre-integration-test</phase>
-					            <goals>
-					              <goal>hbm2ddl</goal>
-					            </goals>
-					            <configuration>
-					  				<components>
-					  					<component>
-					  						<name>hbm2ddl</name>
-					  						<implementation>jpaconfiguration</implementation>
-					  					</component>
-					  				</components>
-					  				<componentProperties>
-					  					<!-- genera sentencias drop -->
-					  					<drop>false</drop>
-					  					<!-- genera sentencias create -->
-					  					<create>true</create>
-					  					<!-- con export=false genera los ddls en el fichero de salida definido -->
-					  					<export>false</export>
-					  					<!-- formatea las sentencias -->
-					  					<format>true</format>
-					  					<!-- nombre de la unidad de persistencia definida en el persistence.xml -->
-					  					<persistenceunit>Orienteering</persistenceunit>
-					  					<!-- path al fichero de propiedades donde se localiza básicamente el dialecto de la base de datos -->
-					  					<propertyfile>../perfiles/${build.profile.id}/config.properties</propertyfile>	
-					  					<!-- nombre del fichero de salida que tendrá las sql generadas -->
-					  					<outputfilename>schema-create-test.sql</outputfilename>	
-					  				</componentProperties>
-					  			</configuration>
-					        </execution>
-					        <execution>		
-			  					<id>Generación esquema ddl DROP</id>		        	
-					            <phase>pre-integration-test</phase>
-					            <goals>
-					              <goal>hbm2ddl</goal>
-					            </goals>
-					            <configuration>
-					  				<components>
-					  					<component>
-					  						<name>hbm2ddl</name>
-					  						<implementation>jpaconfiguration</implementation>
-					  					</component>
-					  				</components>
-					  				<componentProperties>
-					  					<!-- genera sentencias drop -->
-					  					<drop>true</drop>
-					  					<!-- genera sentencias create -->
-					  					<create>false</create>
-					  					<!-- con export=false genera los ddls en el fichero de salida definido -->
-					  					<export>false</export>
-					  					<!-- formatea las sentencias -->
-					  					<format>true</format>
-					  					<!-- nombre de la unidad de persistencia definida en el persistence.xml -->
-					  					<persistenceunit>Orienteering</persistenceunit>
-					  					<!-- path al fichero de propiedades donde se localiza básicamente el dialecto de la base de datos -->
-					  					<propertyfile>../perfiles/${build.profile.id}/config.properties</propertyfile>	
-					  					<!-- nombre del fichero de salida que tendrá las sql generadas -->
-					  					<outputfilename>schema-drop-test.sql</outputfilename>	
-					  				</componentProperties>
-					  			</configuration>
-					        </execution>  		        
-			  			</executions>  		  			
-			  			<dependencies>
-			  				<dependency>
-			    				<groupId>org.slf4j</groupId>
-			    				<artifactId>slf4j-api</artifactId>
-			    				<version>${slf4j.version}</version>		
-			    			</dependency>
-			    			<dependency>
-			    				<groupId>org.slf4j</groupId>
-			    				<artifactId>slf4j-simple</artifactId>
-			    				<version>${slf4j.version}</version>		
-			    			</dependency>  				
-			  			</dependencies>	
-			  		</plugin>
-			  	
+
 	  			    <!-- Jetty plugin -->
 			  		<plugin>
 					  	<groupId>org.mortbay.jetty</groupId>
@@ -259,82 +373,8 @@
 				            </goals>
 				          </execution>
 				        </executions>					
-					</plugin>
-								  	
-			  		<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>sql-maven-plugin</artifactId>
-						<version>1.5</version>
-						<executions>
-							<execution>
-								<id>Borra la base de datos de integración si estuviera</id>
-								<phase>pre-integration-test</phase>		
-								<goals>
-									<goal>execute</goal>
-								</goals>
-								<configuration>
-									<autocommit>true</autocommit>
-									<srcFiles>
-										<srcFile>target/hibernate3/sql/schema-drop-test.sql</srcFile>
-									</srcFiles>	
-									<onError>continue</onError>
-								</configuration>			
-							</execution>
-							<execution>
-								<id>Creación base de datos de integración</id>
-								<phase>pre-integration-test</phase>		
-								<goals>
-									<goal>execute</goal>
-								</goals>
-								<configuration>
-									<autocommit>true</autocommit>						
-									<srcFiles>
-										<srcFile>target/hibernate3/sql/schema-create-test.sql</srcFile>
-									</srcFiles>	
-								</configuration>			
-							</execution>	
-							<execution>
-								<id>Borrado de base de datos de integración</id>
-								<phase>post-integration-test</phase>		
-								<goals>
-									<goal>execute</goal>
-								</goals>
-								<configuration>
-									<autocommit>true</autocommit>						
-									<srcFiles>
-										<srcFile>target/hibernate3/sql/schema-drop-test.sql</srcFile>
-									</srcFiles>	
-								</configuration>			
-							</execution>
-							<!-- 							
-							<execution>
-								<id>Para la base de datos H2</id>
-								<phase>process-test-resources</phase>		
-								<goals>
-									<goal>execute</goal>
-								</goals>
-								<configuration>
-									<autocommit>true</autocommit>
-									<sqlCommand>SHUTDOWN</sqlCommand>	
-								</configuration>			
-							</execution>
-							 -->
-						</executions>
-						<configuration>
-							<driver>${db.driver}</driver>
-							<url>${db.url}</url>
-							<username>${db.username}</username>
-							<password>${db.password}</password>
-						</configuration>			
-						<dependencies>
-							<dependency>
-								<groupId>com.h2database</groupId>
-								<artifactId>h2</artifactId>
-								<version>${h2.version}</version>
-							</dependency>	
-						</dependencies>
-					</plugin>						
-					
+					</plugin>	
+<!-- 								  						
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>dbunit-maven-plugin</artifactId>
@@ -365,7 +405,7 @@
 							</dependency>
 						</dependencies>
 					</plugin>
-										
+ -->										
 					<plugin>
 		                <groupId>org.apache.maven.plugins</groupId>
 		                <artifactId>maven-surefire-plugin</artifactId>
@@ -394,22 +434,32 @@
 		                		</configuration>
 		                	</execution>                	
 		                </executions>                
-            		</plugin> 	  				
-  			</plugins>  			  		
+            		</plugin>   				
+  			</plugins>
   		</build>
-  		
-  		<dependencies>
-  			<dependency>
-			  <groupId>commons-dbcp</groupId>
-			  <artifactId>commons-dbcp</artifactId>
-			  <version>1.4</version>
-			</dependency>
-  		</dependencies>
   	</profile>
   </profiles>
   
   <build>  	
-    	
+		<filters>
+			<!-- Esto asegura que el fichero config.properties se carga siempre del 
+				directorio de configuración del perfil activo
+			-->
+			<filter>${perfiles.dir}/${build.profile.id}/config.properties</filter>
+		</filters>
+		
+		<resources>
+			<!-- 
+				Esto hace que las variables (${}) que se encuentren bajo el directorio src/main/resources 
+				de los proyectos sean sustituidos por las propiedades encontradas del 
+				fichero de configuración específico del perfil activo 
+			-->
+			<resource>
+				<filtering>true</filtering>
+				<directory>src/main/resources</directory>
+			</resource>
+		</resources>
+				
   		<plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -444,12 +494,14 @@
 						</sessionHandler>
 					</webAppConfig>
 					<scanTargetPatterns>
+						<!-- 
 						<scanTargetPattern>                            
 							<directory>src/main/webapp/WEB-INF</directory>
 							<includes>
 								<include>**/*</include>
 							</includes>
 						</scanTargetPattern>
+						 -->
 						<scanTargetPattern>                            
 							<directory>src/main/resources</directory>
 							<includes>
@@ -464,13 +516,45 @@
 							</includes>
 						</scanTargetPattern>
 					</scanTargetPatterns>
-				</configuration>			
-			</plugin>
-													              	
+				</configuration>										
+			</plugin>											              	
   		</plugins>
   </build>
   
   <dependencies>
+  	
+  	<!-- Dependencias de Test -->
+  	<dependency>
+    	<groupId>com.github.springtestdbunit</groupId>
+    	<artifactId>spring-test-dbunit</artifactId>
+    	<version>1.0.0</version>
+    	<scope>test</scope>
+    </dependency>        
+    <dependency>
+        <groupId>org.dbunit</groupId>
+        <artifactId>dbunit</artifactId>
+        <version>2.4.9</version>
+        <scope>test</scope>
+        <exclusions>
+            <exclusion>
+                <artifactId>junit</artifactId>
+                <groupId>junit</groupId>
+            </exclusion>
+            <exclusion>
+                <artifactId>slf4j-api</artifactId>
+                <groupId>org.slf4j</groupId>
+            </exclusion>
+        </exclusions>
+  	</dependency>  
+  	
+  	<!-- Dependencia para ejecutar los test de integración. Esta dependencia debería estar en el perfil de integration-test -->
+  	<dependency>
+		<groupId>com.h2database</groupId>
+		<artifactId>h2</artifactId>
+		<version>${h2.version}</version>
+		<scope>test</scope>
+	</dependency>	
+  	
   	<dependency>
 		<groupId>commons-lang</groupId>
 		<artifactId>commons-lang</artifactId>
@@ -603,11 +687,11 @@
         </exclusions>     
     </dependency>       
      
-	<!-- H2 Database -->
+	<!-- Database dependency-->
 	<dependency>
-		<groupId>com.h2database</groupId>
-		<artifactId>h2</artifactId>
-		<version>${h2.version}</version>
+		<groupId>${database.groupId}</groupId>
+		<artifactId>${database.artifactId}</artifactId>
+		<version>${database.version}</version>
 		<scope>runtime</scope>
 	</dependency>	
 	
