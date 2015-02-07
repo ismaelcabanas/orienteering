@@ -58,7 +58,7 @@ public class ClubServicioImpl implements ClubServicio {
 				.conNombre(clubForm.getNombre())
 				.build();		
 		
-		LOGGER.debug("Creando un nuevo club con la siguiente información: " + club);
+		LOGGER.debug("Se va a dar de alta un nuevo club con la siguiente información: " + club);
 		
 		// se persiste la entidad
 		Club clubPersistido = repositorio.save(club);
@@ -73,7 +73,8 @@ public class ClubServicioImpl implements ClubServicio {
 	@Transactional
 	public ClubDto actualiza(ClubForm clubForm) {
 
-		// TODO Usar el método del servicio!!
+		LOGGER.debug("Se van a actualizar los datos del club identificado por " + clubForm.getId() + 
+				" con los datos " + clubForm);
 		
 		// se busca la entidad
 		Club club = repositorio.findOne(clubForm.getId());
@@ -133,6 +134,15 @@ public class ClubServicioImpl implements ClubServicio {
 		
 	}
 
+	@Override
+	@Transactional
+	public void baja(Long id) {
+		
+		LOGGER.debug("Se va a dar de baja el club con identificador " + id);
+		
+		repositorio.delete(id);
+		
+	}
 
 	/**
 	 * M�todo necesario para tests.

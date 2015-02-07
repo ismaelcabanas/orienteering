@@ -162,7 +162,7 @@
 													<td>
 														<a id="detLinkClub${club.id}" href="${pageContext.servletContext.contextPath}/admin/clubs/detalle?id=${club.id}&page=club&submenu=01" class="btn btn-sm"><i class="fa fa-eye"></i> <spring:message code="texto.boton.ver"/></a>
 														<a id="edtLinkClub${club.id}" href="${pageContext.servletContext.contextPath}/admin/clubs/edicion?id=${club.id}&page=club&submenu=01" class="btn btn-sm"><i class="fa fa-edit"></i> <spring:message code="texto.boton.editar"/></a>
-														<a href="" class="btn btn-sm"><i class="fa fa-trash-o"></i> <spring:message code="texto.boton.eliminar"/></a>
+														<a id="bajLinkClub${club.id}" href="javascript:mostrarDialogoEliminar('${club.id}','${club.nombre}')" class="btn btn-sm"><i class="fa fa-trash-o"></i> <spring:message code="texto.boton.eliminar"/></a>
 													</td>
 												</tr>
 											</c:forEach>
@@ -377,9 +377,30 @@
 	}
 	
 	function mostrarDialogoEliminar(id, nombreClub){
-		bootbox.confirm("¿Está seguro que quiere eliminar el club " + nombreClub + "?", function(result) {
-            //alert("Confirm result: "+result);
-         }); 
+		var mensaje0 = "<spring:message code='mensaje.baja.club.texto0' />";
+		var mensaje1 = "<spring:message code='mensaje.baja.pregunta' />";
+		var mensaje = mensaje0 + nombreClub + mensaje1;
+		var titulo = "<spring:message code='mensaje.baja.club' />";
+		var txtAceptar = "<spring:message code='texto.boton.aceptar' />";
+		var txtCancelar = "<spring:message code='texto.boton.cancelar' />";
+		bootbox.dialog({
+			message: mensaje,
+			title: titulo,
+			buttons: {
+				cancelar: {
+					label: txtCancelar,
+					className: "default"
+				},
+				
+				aceptar: {
+					label: txtAceptar,
+					className: "green-meadow",
+					callback: function(){
+						window.location.href = '${pageContext.servletContext.contextPath}/admin/clubs/baja?id=' + id;
+					}
+				}
+			}
+		}); 
 	}
 		
     //end #demo_3

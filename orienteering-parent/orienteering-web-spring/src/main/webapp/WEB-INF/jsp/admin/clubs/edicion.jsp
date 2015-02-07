@@ -126,7 +126,7 @@
 
 													<div class="col-md-6">
 
-														<div class="col-md-offset-3 col-md-9">
+														<div class="col-md-12">
 
 															<button id="btnActualizar" type="submit" class="btn green-meadow"><spring:message code="texto.boton.actualizar"/></button>
 															

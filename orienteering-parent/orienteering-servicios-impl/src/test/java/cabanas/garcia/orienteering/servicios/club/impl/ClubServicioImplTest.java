@@ -139,4 +139,22 @@ public class ClubServicioImplTest {
 		assertThat("El nombre del club a actualizar debe ser " + OTRO_NOMBRE_CLUB, dtoActualizado.getNombre(), is(equalTo(OTRO_NOMBRE_CLUB)));
 		
 	}
+	
+	@Test
+	public void dado_un_club_persistido_en_el_sistema_cuando_se_da_de_baja_entonces_se_elimina_del_repositorio_de_almacenamiento(){
+		
+		// GIVEN
+		Long idClub = 1L;
+		
+		// WHEN
+		servicio.baja(idClub);
+		
+		// THEN
+		ArgumentCaptor<Long> argId = ArgumentCaptor.forClass(Long.class);
+		
+		verify(mockServicioPersistencia, times(1)).delete(argId.capture());
+		
+		assertThat(argId.getValue(), is(equalTo(idClub)));
+		
+	}
 }

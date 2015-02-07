@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<html xmlns:concordion="http://www.concordion.org/2007/concordion">
+
+    <head>
+        <link href="../concordion.css" rel="stylesheet" type="text/css" />
+        <TITLE>Funcionalidad de baja de clubs de orientación</TITLE>
+    </head>
+
+    <body>
+
+        <h1>Funcionalidad de baja de clubs de orientación</h1>
+		
+		<p>
+			Se requiere que un usuario pueda dar de baja un club de orientación.
+		</p>
+		<p>	
+			El usuario utilizará el formulario de búsqueda de clubs de orientación para buscar el club 
+			de orientación que desea dar de baja. Si encuentra el club de orientación, podrá dar de baja 
+			el club de orientación mediante el link <b><i>Eliminar</i></b>. 
+		</p> 
+		
+		<p>
+			El sistema preguntará al usuario si desea dar de baja al club seleccionado; en caso afirmativo, el 
+			sistema dará de baja al club y no podrá ser consultado, en caso afirmativo, el sistema mostrará un 
+			mensaje informativo indicando que ha cancelado la baja del club seleccionado.
+		</p>
+
+        	
+      <div class="example">
+            <h3>Baja de un club de orientación</h3>
+            
+            <p>    	
+            	Dado un usuario que, pulsando sobre el <i concordion:execute="#listadoPage = navegaListadoClubs()">link de gestión de clubs</i> del menú,  accede a la página de <span concordion:assertEquals="#listadoPage.getTitulo()">Listado de clubs de orientación</span>.
+            </p>
+            <p>
+            	El usuario realiza una búsqueda del club <b concordion:set="#nombre">Baliza</b> y 
+            	
+            	el <span concordion:execute="#listadoPage = buscar(#nombre)">sistema devuelve como resultado el club</span>             	            
+            	
+            	<table>
+            		<tr>
+            			<th>Id</th>
+			        	<th>Nombre</th>
+			        </tr>
+            		<tr>
+            			<td concordion:set="#id">997</td>
+            			<td>Club Baliza Is Coming</td>
+            		</tr>
+            	</table>
+            </p>
+            <p>
+            	El usuario pincha sobre el link <b><i>Eliminar</i></b> del club y 
+            	
+            	el <span concordion:execute="#listadoPage = informarBaja(#id)">sistema muestra</span> el cuadro de diálogo 
+            	
+	            <b><i concordion:assertEquals="#listadoPage.getTituloDialogoBaja()">Baja de clubs de orientación</i></b>	preguntando al usuario si desea eliminar el club seleccionado,
+            	
+            	si el usuario <span concordion:execute="#listadoPage = baja()">responde afirmativamente</span> entonces el sistema da de baja al club de orientación, 
+            	
+            	informa al usuario con el mensaje <span concordion:assertEquals="#listadoPage.getMensaje()">El registro se ha dado de baja correctamente</span> y 
+            	
+            	el usuario permanece en la página de <span concordion:assertEquals="#listadoPage.getTitulo()">Listado de clubs de orientación</span>.
+            	
+            </p>
+            <p>
+            	Si el usuario vuelve a realizar una búsqueda del club <b concordion:set="#nombre2">Baliza</b>, 
+            	
+            	entonces el <span concordion:execute="#listadoPage = buscar(#nombre2)">sistema informa al usuario</span> 
+            	
+            	con el mensaje <span concordion:assertEquals="#listadoPage.getMensaje()">No existen resultados para los criterios de búsqueda establecidos</span>.
+                             	
+            </p>
+                               
+        </div>
+        
+        
+        <div class="example">
+            <h3>Cancelación de la baja de un club de orientación</h3>
+            
+            <p>    	
+            	Dado un usuario que, pulsando sobre el <i concordion:execute="#listadoPage = navegaListadoClubs()">link de gestión de clubs</i> del menú,  accede a la página de <span concordion:assertEquals="#listadoPage.getTitulo()">Listado de clubs de orientación</span>.
+            </p>
+            <p>
+            	El usuario realiza una búsqueda del club <b concordion:set="#nombre">Escondite</b> y 
+            	
+            	el <span concordion:execute="#listadoPage = buscar(#nombre)">sistema devuelve como resultado el club</span>             	            
+            	
+            	<table>
+            		<tr>
+            			<th>Id</th>
+			        	<th>Nombre</th>
+			        </tr>
+            		<tr>
+            			<td concordion:set="#id">998</td>
+            			<td>Club Escondite Madrid</td>
+            		</tr>
+            	</table>
+            </p>
+            <p>
+            	El usuario pincha sobre el link <b><i>Eliminar</i></b> del club y 
+            	
+            	el <span concordion:execute="#listadoPage = informarBaja(#id)">sistema muestra</span> el cuadro de diálogo  
+            	
+            	<b><i concordion:assertEquals="#listadoPage.getTituloDialogoBaja()">Baja de clubs de orientación</i></b> preguntando al usuario si desea eliminar el club seleccionado,
+            	
+            	si el usuario <span concordion:execute="#listadoPage = cancelaBaja()">responde negativamente</span> entonces el sistema da de baja al club de orientación y 
+            	
+            	el usuario permanece en la página de <span concordion:assertEquals="#listadoPage.getTitulo()">Listado de clubs de orientación</span>.
+            	
+            </p>
+            <p>
+            	Si el usuario vuelve a realizar una búsqueda del club <b concordion:set="#nombre2">Escondite</b>, 
+            	
+            	entonces el <span concordion:execute="#listadoPage = buscar(#nombre2)">sistema devuelve el siguiente listado de clubs</span> 
+            	
+            	<table concordion:verifyRows="#club : #listadoPage.getResultadoConsulta()">
+            		<tr>
+			        	<th concordion:assertEquals="#club.nombre">Nombre</th>
+			        </tr>
+			        <tr>
+			        	<td>Club Escondite Madrid</td>
+			        </tr>
+			    </table>
+                             	
+            </p>
+                               
+        </div>
+         
+        
+<!--                          
+        <h2>Escenarios alternativos</h2>
+
+	    <ul>	
+	        <li><a concordion:run="concordion" href="AltasValidaciones.html">Errores de validación en el alta del club de orientación</a></li>	        	        
+	    </ul>
+ -->             
+    </body>
+</html>
+

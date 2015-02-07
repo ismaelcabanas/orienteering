@@ -1,11 +1,10 @@
 package cabanas.garcia.orienteering.web.controllers.club;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.verify;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
-
-import java.util.Collection;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -14,13 +13,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.internal.verification.VerificationModeFactory;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.ui.Model;
 
-import cabanas.garcia.orienteering.dtos.club.ClubBusquedaForm;
-import cabanas.garcia.orienteering.dtos.club.ClubDto;
 import cabanas.garcia.orienteering.dtos.club.ClubForm;
 import cabanas.garcia.orienteering.servicios.club.api.ClubServicio;
 import cabanas.garcia.orienteering.web.util.mensaje.MensajeUsuario;

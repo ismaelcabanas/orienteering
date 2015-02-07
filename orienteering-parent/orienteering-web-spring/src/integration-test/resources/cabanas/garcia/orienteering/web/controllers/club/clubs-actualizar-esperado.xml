@@ -1,0 +1,10 @@
+<!--?xml version='1.0' encoding='UTF-8'?--> 
+
+<dataset>
+    
+    <!-- El id debe estar en orden creciente, de lo contrario falla el @ExpectedDataSet de Dbunit -->
+    <CLUBS ID="997" NOMBRE="Pepito Club" />
+	<CLUBS ID="998" NOMBRE="Club Escondite Madrid" />
+    <CLUBS ID="999" NOMBRE="CLUB 999" />
+	
+</dataset>

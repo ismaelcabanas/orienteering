@@ -34,7 +34,7 @@ public class ClubController {
 	public static final String VISTA_ADMIN_CLUBS_ACTUALIZAR = "admin/clubs/actualizar";
 	public static final String VISTA_ADMIN_CLUBS_DETALLE = "admin/clubs/detalle";
 	
-	public static final String MODEL_ATTRIBUTE_CLUBS = "clubs";
+	public static final String REQUEST_ATTRIBUTE_CLUBS = "clubs";
 
 	/* Constantes de atributos de request */
 	public static final String REQUEST_ATTRIBUTE_MENSAJE = "mensaje";
@@ -42,9 +42,7 @@ public class ClubController {
 	public static final String REQUEST_ATTRIBUTE_CLUB_BUSQUEDA_FORM = "clubBusquedaForm";
 	public static final String REQUEST_ATTRIBUTE_CLUB_DTO = "clubDto";
 	
-	public static final String URL_PARAM_ID_CLUB = "id";
-	
-			
+	public static final String URL_PARAM_ID_CLUB = "id";	
 	
 	@Resource
 	private ClubServicio clubServicio;
@@ -121,8 +119,14 @@ public class ClubController {
 		// el servicio da de alta el club
 		clubServicio.alta(clubForm);
 		
+//		// el servicio recupera el listado de clubs
+//		Collection<ClubDto> listadoClubs = clubServicio.buscar(clubBusquedaForm);
+		
 		// se establece el mensaje de usuario en la request
 		request.setAttribute(REQUEST_ATTRIBUTE_MENSAJE, new MensajeUsuario("texto.accion.alta"));
+		
+//		// establezco el listado de clubs 
+//		model.addAttribute("listado", listadoClubs);
 		
 		// devuelvo la vista de listado de clubs
 		return VISTA_ADMIN_CLUBS_LISTADO;
@@ -160,13 +164,18 @@ public class ClubController {
 	 */
 	@RequestMapping(value=ClubControllerPaths.BUSCAR, method=RequestMethod.POST)
 	public String buscar(ClubBusquedaForm clubFormBusqueda, 
-			Model model){
+			HttpServletRequest request){
 		
 		// creo la lista que contendrá los clubs resultados de la búsqueda
 		Collection<ClubDto> clubs = clubServicio.buscar(clubFormBusqueda);
 		
-		// añado la lista de clubs como atributo de la request
-		model.addAttribute(MODEL_ATTRIBUTE_CLUBS, clubs);
+		// si la consulta ha devuelto resultados, se establece en la request el listado de clubs resultado de 
+		// la consulta; en caso contrario, se establece un mensaje informativo al usuario
+		if(clubs == null || clubs.size() == 0){
+			request.setAttribute(REQUEST_ATTRIBUTE_MENSAJE, new MensajeUsuario("texto.accion.buscar.sinresultado"));
+		}
+		else
+			request.setAttribute(REQUEST_ATTRIBUTE_CLUBS, clubs);
 		
 		// devuelvo la vista de listado
 		return VISTA_ADMIN_CLUBS_LISTADO;
@@ -194,7 +203,7 @@ public class ClubController {
 			e.printStackTrace();
 		}
 		
-		// 
+		// establezco la instancia ClubForm con la información del club seleccionado
 		ClubForm clubForm = ClubForm.getBuilder()
 				.conId(clubDtoSeleccionado.getId())
 				.conNombre(clubDtoSeleccionado.getNombre())
@@ -267,6 +276,27 @@ public class ClubController {
 	@RequestMapping(value=ClubControllerPaths.VOLVER, method=RequestMethod.GET)
 	public String volver() {
 
+		return VISTA_ADMIN_CLUBS_LISTADO;
+		
+	}
+	
+	/**
+	 * Método que gestiona la petición de baja de club
+	 * @param idClubSeleccionado 
+	 * @param request 
+	 * 
+	 * @return
+	 */
+	@RequestMapping(value=ClubControllerPaths.BAJA, method=RequestMethod.GET)
+	public String baja(@RequestParam(value=URL_PARAM_ID_CLUB) Long idClubSeleccionado, HttpServletRequest request) {
+		
+		// doy de baja al club
+		clubServicio.baja(idClubSeleccionado);
+		
+		// si la baja se efectuó, establezco en la request un mensaje informativo
+		request.setAttribute(REQUEST_ATTRIBUTE_MENSAJE, new MensajeUsuario("texto.accion.baja"));
+		
+		// devuelvo la vista de baja
 		return VISTA_ADMIN_CLUBS_LISTADO;
 		
 	}

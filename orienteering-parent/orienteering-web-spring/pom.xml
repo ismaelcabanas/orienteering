@@ -18,7 +18,7 @@
 		
 		<perfiles.dir>../perfiles</perfiles.dir>				
   		
-  		<database.groupId>hsqldb</database.groupId>
+  		<database.groupId>org.hsqldb</database.groupId>
 		<database.artifactId>hsqldb</database.artifactId>
 		<database.version>${hsqldb.version}</database.version>
   	</properties>  
@@ -34,7 +34,7 @@
 				-->
   				<build.profile.id>despliegue</build.profile.id> 
   				
-  				<database.groupId>hsqldb</database.groupId>
+  				<database.groupId>org.hsqldb</database.groupId>
   				<database.artifactId>hsqldb</database.artifactId>
   				<database.version>${hsqldb.version}</database.version>
   				<!-- 
@@ -177,7 +177,7 @@
 						</configuration>			
 						<dependencies>
 							<dependency>
-								<groupId>hsqldb</groupId>
+								<groupId>org.hsqldb</groupId>
 								<artifactId>hsqldb</artifactId>
 								<version>${hsqldb.version}</version>
 							</dependency>
@@ -213,7 +213,7 @@
 						</configuration>
 						<dependencies>
 							<dependency>
-								<groupId>hsqldb</groupId>
+								<groupId>org.hsqldb</groupId>
 								<artifactId>hsqldb</artifactId>
 								<version>${hsqldb.version}</version>
 							</dependency>
@@ -249,7 +249,7 @@
 	            <guava.version>15.0</guava.version> -->
 	            <guava.version>r08</guava.version>
 	            
-	            <database.groupId>hsqldb</database.groupId>
+	            <database.groupId>org.hsqldb</database.groupId>
   				<database.artifactId>hsqldb</database.artifactId>
   				<database.version>${hsqldb.version}</database.version>
 			</properties>

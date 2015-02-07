@@ -5,7 +5,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
 import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.equalTo;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,6 +37,7 @@ import cabanas.garcia.orienteering.ColumnSensingFlatXMLDataSetLoader;
 import cabanas.garcia.orienteering.dtos.club.ClubBusquedaForm;
 import cabanas.garcia.orienteering.dtos.club.ClubDto;
 import cabanas.garcia.orienteering.web.ConstantesWebTest;
+import cabanas.garcia.orienteering.web.util.mensaje.MensajeUsuario;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.TransactionDbUnitTestExecutionListener;
@@ -63,6 +67,7 @@ import com.github.springtestdbunit.assertion.DatabaseAssertionMode;
 public class ITClubBuscarController {
 
 	private static final String NOMBRE_CLUB = "club";
+	private static final String NOMBRE_CLUB_QUE_NO_EXISTE = "kkclub";
 
 	// La interface mock que se utiliza para enviar peticiones simuladas
 	private MockMvc mockMvc;
@@ -102,9 +107,32 @@ public class ITClubBuscarController {
 		respuestaBusqueda.andExpect(status().isOk())
 			.andExpect(view().name(ClubController.VISTA_ADMIN_CLUBS_LISTADO))
 			.andExpect(forwardedUrl("/WEB-INF/jsp/" + ClubController.VISTA_ADMIN_CLUBS_LISTADO + ".jsp"))
-			.andExpect(model().attributeExists(ClubController.MODEL_ATTRIBUTE_CLUBS))
-			.andExpect(model().attribute(ClubController.MODEL_ATTRIBUTE_CLUBS, hasItems(clubEsperado1, clubEsperado2)));
+			.andExpect(request().attribute(ClubController.REQUEST_ATTRIBUTE_CLUBS, hasItems(clubEsperado1, clubEsperado2)));
 		
 		
+	}
+	
+	@Test
+	@DatabaseSetup("clubs.xml")
+	@ExpectedDatabase(value="clubs.xml", assertionMode=DatabaseAssertionMode.NON_STRICT)
+	public void cuando_se_realiza_una_busqueda_que_no_devuelve_resultados_deberia_devolver_la_vista_de_listado_de_clubs_e_informar_al_usuario() throws Exception{
+		
+		// GIVEN
+		MockHttpServletRequestBuilder peticionBuscarClubsPorNombre = post(ClubControllerPaths.BUSCAR)
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)				
+				.param(ConstantesWebTest.CAMPO_FORM_BUSQUEDA_NOMBRE, NOMBRE_CLUB_QUE_NO_EXISTE)
+				//.requestAttr(ClubController.REQUEST_ATTRIBUTE_CLUB_BUSQUEDA_FORM, ClubBusquedaForm.getBuilder().build())
+				;
+		
+		// WHEN
+		// al hacer el envío, el framework de Spring se encarga de hacer el mapeo con lo parámetros del método al que se llama
+		ResultActions respuestaBusqueda = mockMvc.perform(peticionBuscarClubsPorNombre);
+		
+		// THEN
+		respuestaBusqueda.andExpect(status().isOk())
+			.andExpect(view().name(ClubController.VISTA_ADMIN_CLUBS_LISTADO))
+			.andExpect(forwardedUrl("/WEB-INF/jsp/" + ClubController.VISTA_ADMIN_CLUBS_LISTADO + ".jsp"))
+			.andExpect(request().attribute(ClubController.REQUEST_ATTRIBUTE_MENSAJE, is(equalTo(new MensajeUsuario("texto.accion.buscar.sinresultado")))));
+				
 	}
 }

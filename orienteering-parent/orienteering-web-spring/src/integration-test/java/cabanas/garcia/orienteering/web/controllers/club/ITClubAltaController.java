@@ -95,7 +95,8 @@ public class ITClubAltaController {
 				.andExpect(status().isOk())
 				.andExpect(view().name(ClubController.VISTA_ADMIN_CLUBS_LISTADO))
 				.andExpect(forwardedUrl("/WEB-INF/jsp/" + ClubController.VISTA_ADMIN_CLUBS_LISTADO + ".jsp"))
-				.andExpect(request().attribute(ClubController.REQUEST_ATTRIBUTE_MENSAJE, mensajeUsuarioEsperado));
+				.andExpect(request().attribute("mensaje", mensajeUsuarioEsperado))
+				;
 				//.andExpect(model().attribute("listado", Matchers.anyCollectionOf(ClubDto.class)));
 		
 	}

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<html xmlns:concordion="http://www.concordion.org/2007/concordion">
+
+    <head>
+        <link href="../concordion.css" rel="stylesheet" type="text/css" />
+        <TITLE>Funcionalidad de consulta de clubs de orientación</TITLE>
+    </head>
+
+    <body>
+
+        <h1>Funcionalidad de consulta de clubs de orientación</h1>
+		
+		<p>
+			Se requiere que un usuario pueda consultar clubs de orientación aplicando unos criterios de búsqueda.
+		</p>
+		<p>	
+			El usuario podrá buscar clubs de orientación por los siguientes criterios de búsqueda:
+			<ul>
+				<li><b><i>Nombre</i></b>, la búsqueda por nombre de club devolvería cualquier club cuyo nombre contenga el valor introducido; no se hará distinción entre mayúsculas y minúsculas.</li>
+			</ul>			
+		</p>
+		<p>
+			Una vez rellenado los criterios de búsqueda, el usuario pulsará sobre el botón/link <b><i>Buscar</i></b> y 
+			el sistema mostrará un listado con los resultados de la búsqueda.
+		</p>
+		<p> 
+			En el caso que la búsqueda no devuelva datos, se mostrará al usuario un mensaje informativo indicando que 
+			el resultado de la búsqueda no devolvió ningún resultado.
+		</p>
+		<p>	
+			También se le proporcionará al usuario la funcionalidad de inicializar el criterio de búsqueda mediante
+			el botón/link <b><i>Limpiar</i></b>.			
+		</p>        	
+		<p>
+			Para esta especificación partimos que en el sistema están almacenados los siguientes clubs de orientación
+			<table>
+				<tr>
+					<th>Id</th>
+					<th>Nombre</th>
+				</tr>
+				<tr>
+					<td>999</td>
+					<td>Club 999</td>
+				</tr>
+				<tr>
+					<td>998</td>
+					<td>Club Escondite Madrid</td>
+				</tr>
+				<tr>
+					<td>997</td>
+					<td>Consulta Testing Club</td>
+				</tr>
+			</table>
+		</p>
+      <div class="example">
+            <h3>Consulta de clubs de orientación con resultados por nombre de club</h3>
+                
+            <p>    	
+            	Dado un usuario que, pulsando sobre el <i concordion:execute="#listadoPage = navegaListadoClubs()">link de gestión de clubs</i> del menú,  accede a la página de <span concordion:assertEquals="#listadoPage.getTitulo()">Listado de clubs de orientación</span>.
+            </p>
+            <p>
+            	El usuario rellena el formulario de búsqueda con los siguientes datos:
+            	
+            	<table>
+            		<tr>
+            			<th>Campo de búsqueda</th>
+            			<th>Valor</th>
+            		</tr>
+            		<tr>
+            			<td>Nombre</td>
+            			<td concordion:set="#nombre">consulta</td>
+            		</tr>
+            	</table>
+            	
+            	<span concordion:execute="rellenaCamposFormularioBusquedaClubs(#nombre)"></span>
+            	
+            	y pulsa sobre el botón/link <b><i concordion:execute="#listadoPage = buscar()">Buscar</i></b>.
+            </p>
+            <p>
+            	El sistema devuelve como resultado el siguiente listado de clubs que coinciden con los criterios de búsqueda:
+            	
+            	<table concordion:verifyRows="#club : obtenerClubs()">
+			        <tr>
+			        	<th concordion:assertEquals="#club.nombre">Nombre</th>
+			        </tr>
+			        <tr>
+			        	<td>Consulta Testing Club</td>
+			        </tr>
+			    </table>
+			    
+			    y permanece en la página <span concordion:assertEquals="#listadoPage.getTitulo()">Listado de clubs de orientación</span>.
+            </p>
+        </div>
+        
+        <h2>Escenarios alternativos</h2>
+
+	    <ul>	
+	        <li><a concordion:run="concordion" href="ConsultaSinResultado.html">¿Qué pasa cuando se realiza una consulta que no devuelve resultados?</a></li>
+	    </ul>
+                     
+    </body>
+</html>
+

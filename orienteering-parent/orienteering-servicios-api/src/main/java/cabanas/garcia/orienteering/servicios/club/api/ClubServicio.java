@@ -56,4 +56,11 @@ public interface ClubServicio {
 	 */
 	ClubDto actualiza(ClubForm clubForm);
 
+	/**
+	 * Método que da de baja el club con identificador <code>id</code>.
+	 * 
+	 * @param id
+	 */
+	void baja(Long id);
+
 }

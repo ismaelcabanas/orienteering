@@ -11,5 +11,6 @@ public interface ClubControllerPaths {
 	public static final String ACTUALIZAR = "/admin/clubs/actualizar";
 	public static final String DETALLE = "/admin/clubs/detalle";
 	public static final String VOLVER = "/admin/clubs/volver";
+	public static final String BAJA = "/admin/clubs/baja";
 
 }

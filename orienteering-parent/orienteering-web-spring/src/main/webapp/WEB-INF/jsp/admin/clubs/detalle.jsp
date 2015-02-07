@@ -103,7 +103,6 @@
 									<div class="portlet-body form">
 
 										<!-- BEGIN FORM-->
-										<form:form method="POST" commandName="clubDto">										
 										
 											<div class="form-body">																							
 												 
@@ -111,13 +110,12 @@
 	
 													<label class="control-label"><spring:message code="club.nombre.label"/></label>
 													
-													<form:label id="lblNombre" path="nombre"></form:label>	
+													<input id="lblNombre" value="${clubDto.nombre}" class="form-control" disabled />	
 													
 												</div>
 	
 											</div>	
 											
-										</form:form>
 										
 										<div class="form-actions fluid">
 
@@ -125,7 +123,7 @@
 
 												<div class="col-md-6">
 
-													<div class="col-md-offset-3 col-md-9">
+													<div class="col-md-12">
 
 														<a id="btnVolver" href="${pageContext.servletContext.contextPath}/admin/clubs/volver" class="btn default"><spring:message code="texto.boton.volver"/></a>
 														
