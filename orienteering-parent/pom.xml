@@ -31,8 +31,8 @@
   	<module>orienteering-repositorio-impl</module>
   	<module>orienteering-servicios-api</module>
     <module>orienteering-servicios-impl</module>
-  	<module>orienteering-especificaciones</module>
-  	<module>orienteering-web-spring</module>  	
+    <module>orienteering-web-spring</module>
+  	<module>orienteering-especificaciones</module>  	
   </modules>
   
     <properties>    	
@@ -50,22 +50,72 @@
 	    	    
 	    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	    
-	    <concordion.version>1.4.4</concordion.version>
-	    <concordion-extensions.version>1.1.0</concordion-extensions.version>
-	    
+		<!-- jetty properties -->
+	    <jetty.version>9.2.7.v20150116</jetty.version>             	            		       		       	
+	    <jetty.port>8888</jetty.port>
+		<web.context>/orienteering-web</web.context>
+		<web.host>http://localhost:${web.port}</web.host>
+		
 	    <perfiles.dir>perfiles</perfiles.dir>    	    	    
 	    
-	    <!-- Versión de guava necesaria cuando entre en escena el artefacto bonecp -->
-	    <guava.version>r08</guava.version>
+	    <!-- Por defecto no se ejecutan test unitarios ni de integración -->
+	    <skip.integration.tests>true</skip.integration.tests>
+	    <skip.unit.tests>true</skip.unit.tests>
   	</properties>
 
 	<profiles>
+		
+		<!-- Este perfil está pensado únicamente para ejecutar tests unitarios -->
+		<profile>
+			<id>unit-tests</id>
+			<properties>
+				<build.profile.id>unit-tests</build.profile.id>
+				
+				<skip.unit.tests>false</skip.unit.tests>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+		                <groupId>org.apache.maven.plugins</groupId>
+		                <artifactId>maven-surefire-plugin</artifactId>
+		                <version>2.12</version>
+		                <configuration>
+		                    <skip>true</skip>
+		                </configuration>                
+		                <executions>
+		                	<execution>
+		                		<id>default-test</id>
+		                		<phase>none</phase>
+		                	</execution>                	
+		                	<execution>
+		                		<id>Test unitarios</id>
+		                		<phase>test</phase>
+		                		<goals>
+		                			<goal>test</goal>
+		                		</goals>
+		                		<configuration>
+		                			<testSourceDirectory>src/test/java</testSourceDirectory>
+		                			<skip>false</skip>
+		                			<skipTests>${skip.unit.tests}</skipTests>
+		                			<includes>
+		                				<include>**/*Test.java</include>
+		                			</includes>
+		                			<excludes>
+		                				<exclude>**/*Fixture.java</exclude>
+		                				<exclude>**/*IT.java</exclude>
+		                				<exclude>**/IT*.java</exclude>
+		                			</excludes>
+		                		</configuration>
+		                	</execution>                	
+		                </executions>                
+		            </plugin>          
+				</plugins>
+			</build>
+		</profile>
+		
 		<!-- La configuración del perfil de desarrollo. Es el perfil activo por defecto -->
 		<profile>
-			<id>desarrollo</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
+			<id>desarrollo</id>			
 			<properties>	
 				<!-- Especifica la propiedad build.profile.id que debe coincidir con el nombre 
 					del directorio que contiene el fichero de configuración específica del perfil.
@@ -78,20 +128,33 @@
                 Solo se ejecutan tests unitarios cuando el perfil de desarrollo está activo
 	            -->
 	            <skip.integration.tests>true</skip.integration.tests>
-	            <skip.unit.tests>false</skip.unit.tests>
+	            <skip.unit.tests>true</skip.unit.tests>
 			</properties>
+			
+			<build>
+				<plugins>
+					<plugin>
+		                <groupId>org.apache.maven.plugins</groupId>
+		                <artifactId>maven-surefire-plugin</artifactId>
+		                <version>2.12</version>
+		                <configuration>
+		                    <skip>true</skip>
+		                </configuration>                		                           
+		            </plugin>          
+				</plugins>
+			</build>
 		</profile>
 		
 		<!-- La configuración del perfil de integracion. -->
 		<profile>
-			<id>integracion</id>
+			<id>integration-tests</id>
 			<properties>	
 				<!-- Especifica la propiedad build.profile.id que debe coincidir con el nombre 
 					del directorio que contiene el fichero de configuración específica del perfil.
 					Puesto que el fichero de configuración de desarrollo se encuentra en la carpeta
-					perfiles/integracion, el valor de esta propiedad debe ser integracion. 
+					perfiles/integracion, el valor de esta propiedad debe ser integration-tests. 
 				-->
-				<build.profile.id>integracion</build.profile.id>
+				<build.profile.id>integration-tests</build.profile.id>
 				
 				<!--
                 Solo se ejecutan tests de integración cuando el perfil de integracion está activo. No se ejecutan test unitarios.
@@ -195,13 +258,53 @@
 		                		</configuration>
 		                	</execution>                	
 		                </executions>                
-            		</plugin>		
+            		</plugin>	
+										            		
+            		<plugin>
+		                <groupId>org.apache.maven.plugins</groupId>
+		                <artifactId>maven-jar-plugin</artifactId>
+		                <version>2.4</version>
+		                <executions>
+		                	<!-- Para este perfil no es necesario empaquetar el artefacto jar -->                	
+		                	<execution>
+		                		<id>default-jar</id>
+		                		<phase>none</phase>
+		                	</execution>                	
+		                </executions>                
+            		</plugin>	
+            		
+            		<plugin>
+		                <groupId>org.apache.maven.plugins</groupId>
+		                <artifactId>maven-war-plugin</artifactId>
+		                <version>2.1.1</version>
+		                <executions>
+		                	<!-- Para este perfil no es necesario empaquetar el artefacto war -->
+		                	<execution>
+		                		<id>default-war</id>
+		                		<phase>none</phase>
+		                	</execution>
+		                </executions>                
+		            </plugin>		
             						
 				</plugins>
 			</build>
+			
+			<dependencies>
+				<dependency>
+					<groupId>com.h2database</groupId>
+					<artifactId>h2</artifactId>
+					<version>${h2.version}</version>
+					<scope>runtime</scope>
+				</dependency>	
+			</dependencies>
 		</profile>	
 		
-			
+		<profile>
+			<id>acceptance-tests</id>
+			<properties>
+				<build.profile.id>acceptance-tests</build.profile.id>
+			</properties>
+		</profile>	
 		
 		<!-- La configuración del perfil de test. -->
 		<profile>
@@ -267,7 +370,7 @@
 		            <goals>
 		              <goal>read-project-properties</goal>
 		            </goals>
-		            <configuration>
+		            <configuration>		            	
 		              <files>
 		                <file>${perfiles.dir}/${build.profile.id}/config.properties</file>
 		              </files>
@@ -276,6 +379,7 @@
 		        </executions>
 		    </plugin>
 		     
+		     <!-- Plugin para ejecutar tareas o scripts
 		    <plugin>
 		      <groupId>org.apache.maven.plugins</groupId>
 		      <artifactId>maven-antrun-plugin</artifactId>
@@ -298,38 +402,17 @@
 		        </execution>
 		      </executions>
 		    </plugin>
-		      
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.12</version>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>                
-                <executions>                	
-                	<execution>
-                		<id>Test unitarios</id>
-                		<phase>test</phase>
-                		<goals>
-                			<goal>test</goal>
-                		</goals>
-                		<configuration>
-                			<testSourceDirectory>src/test/java</testSourceDirectory>
-                			<skip>false</skip>
-                			<skipTests>${skip.unit.tests}</skipTests>
-                			<includes>
-                				<include>**/*Test.java</include>
-                			</includes>
-                			<excludes>
-                				<exclude>**/*Fixture.java</exclude>
-                				<exclude>**/*IT.java</exclude>
-                				<exclude>**/IT*.java</exclude>
-                			</excludes>
-                		</configuration>
-                	</execution>                	
-                </executions>                
-            </plugin>          
+		       -->						
 			
+			<plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.5</version>
+                <configuration>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+            
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -341,15 +424,15 @@
                 </configuration>
             </plugin>
             
-            <plugin>
+			<plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>2.5</version>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.12</version>
                 <configuration>
-                    <encoding>${project.build.sourceEncoding}</encoding>
-                </configuration>
-            </plugin>
-					            
+                    <skip>true</skip>
+                </configuration>                                           
+            </plugin>     
+		            		            
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>

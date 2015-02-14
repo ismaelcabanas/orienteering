@@ -9,10 +9,10 @@
   
     <properties>
 		
-		<perfiles.dir>../perfiles</perfiles.dir>
-		
 		<concordion.version>1.4.4</concordion.version>
 	    <concordion-extensions.version>1.1.0</concordion-extensions.version>
+	    
+	    <perfiles.dir>../perfiles</perfiles.dir>
 	    
   	</properties>
 
@@ -20,29 +20,7 @@
  		
  				<!-- La configuración del perfil de test-aceptacion. -->
 		<profile>
-			<id>test-aceptacion</id>
-			<properties>	
-				<!-- Especifica la propiedad build.profile.id que debe coincidir con el nombre 
-					del directorio que contiene el fichero de configuración específica del perfil.
-					Puesto que el fichero de configuración de test-aceptacion se encuentra en la carpeta
-					perfiles/test-aceptacion, el valor de esta propiedad debe ser test-aceptacion. 
-				-->
-				<build.profile.id>test-aceptacion</build.profile.id>
-				
-				<!--
-                Solo se ejecutan tests de integración cuando el perfil de test-aceptacion está activo. No se ejecutan test unitarios.
-	            -->
-	            <skip.acceptance.tests>false</skip.acceptance.tests>
-	            <skip.unit.tests>true</skip.unit.tests>
-	            
-	            <!-- Versión de guava necesaria cuando entre en escena el artefacto selenium-java
-	            <guava.version>15.0</guava.version> -->
-	            <guava.version>r08</guava.version>
-	            
-	            <database.groupId>org.hsqldb</database.groupId>
-  				<database.artifactId>hsqldb</database.artifactId>
-  				<database.version>${hsqldb.version}</database.version>
-			</properties>
+			<id>acceptance-tests</id>
 			
 			<build>
 				<plugins>
@@ -60,9 +38,9 @@
 							        <goal>add-test-source</goal>
 							    </goals>
 							    <configuration>
-							        <!-- Configures the source directory of our integration tests -->
+							        <!-- Configures the source directory of our acceptance tests -->
 							        <sources>
-							            <source>src/acceptance-test/java</source>
+							            <source>src/test/java</source>
 							        </sources>
 							    </configuration>
 							</execution>
@@ -74,7 +52,7 @@
 								    <goal>add-test-resource</goal>
 								</goals>
 								<configuration>
-								    <!-- Configures the resource directory of our integration tests -->
+								    <!-- Configures the resource directory of our acceptance tests -->
 								    <resources>
 								        <!--
 								            Placeholders that are found from the files located in the configured resource
@@ -82,9 +60,10 @@
 								            specific configuration file.
 								        -->
 								        <resource>
-								            <directory>src/acceptance-test/java</directory>
+								            <directory>src/test/java</directory>
 								            <includes>
 								            	<include>**/*.html</include>
+								            	<include>**/*.xml</include>
 								            </includes>
 								        </resource>
 								    </resources>
@@ -115,19 +94,20 @@
 
 	  			    <!-- Jetty plugin -->
 			  		<plugin>
-					  	<groupId>org.mortbay.jetty</groupId>
+					  	<groupId>org.eclipse.jetty</groupId>
 						<artifactId>jetty-maven-plugin</artifactId>
 						<version>${jetty.version}</version>
 						<configuration>
-							<connectors>
-								<connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
-									<port>${web.port}</port>
-								</connector>
-							</connectors>
-						    <scanIntervalSeconds>10</scanIntervalSeconds>
-							<reload>automatic</reload>
-							<stopKey>foo</stopKey>
+							<war>../orienteering-web-spring/target/orienteering-web-acceptance-test.war</war>
+							<httpConnector>
+			                    <port>${jetty.port}</port>
+			                </httpConnector>
+						    <stopKey>foo</stopKey>
 							<stopPort>9090</stopPort>
+							<!-- Esta propiedad es fundamental para que al parar el servidor jetty no de errores de
+								ClassNotFoundException
+							-->
+							<stopWait>20</stopWait>
 							<webAppConfig>
 								<contextPath>${web.context}</contextPath>
 								<sessionHandler implementation="org.eclipse.jetty.server.session.SessionHandler">
@@ -135,40 +115,20 @@
 										<storeDirectory>${basedir}/target/sessions</storeDirectory>
 									</sessionManager>
 								</sessionHandler>
-							</webAppConfig>
-							<scanTargetPatterns>
-								<scanTargetPattern>                            
-									<directory>src/main/webapp/WEB-INF</directory>
-									<includes>
-										<include>**/*</include>
-									</includes>
-								</scanTargetPattern>
-								<scanTargetPattern>                            
-									<directory>src/main/resources</directory>
-									<includes>
-										<include>**/*.xml</include>
-										<include>**/*.properties</include>
-									</includes>
-								</scanTargetPattern>
-								<scanTargetPattern>
-									<directory>src/main/java</directory>
-									<includes>
-										<include>**/*.java</include>
-									</includes>
-								</scanTargetPattern>
-							</scanTargetPatterns>
+							</webAppConfig>	
+							<!-- If true, this plugin will start jetty but let the build continue. 
+				              This is useful if you want to start jetty as an execution binding in a particular phase and 
+				              then stop it in another. Alternatively, you can set this parameter to false, 
+				              in which case jetty will block and you will need to use a cntrl-c to stop it. -->	
+							<daemon>true</daemon>					
 						</configuration>			
 						<executions>
 				          <execution>
 				            <id>start-jetty</id>
 				            <phase>pre-integration-test</phase>
 				            <goals>
-				              <goal>start</goal>
-				            </goals>
-				            <configuration>
-				              <scanIntervalSeconds>0</scanIntervalSeconds>
-				              <daemon>true</daemon>
-				            </configuration>
+				            	<goal>deploy-war</goal>
+				            </goals>				            
 				          </execution>
 				          <execution>
 				            <id>stop-jetty</id>
@@ -177,40 +137,9 @@
 				              <goal>stop</goal>
 				            </goals>
 				          </execution>
-				        </executions>					
+				        </executions>						        
 					</plugin>	
-<!-- 								  						
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>dbunit-maven-plugin</artifactId>
-						<version>1.0-beta-3</version>
-						<executions>
-							<execution>
-								<id>Preparación de base de la datos</id>
-								<phase>pre-integration-test</phase>
-								<goals>
-									<goal>operation</goal>
-								</goals>
-							</execution>
-						</executions>
-						<configuration>
-							<driver>${db.driver}</driver>
-							<url>${db.url}</url>
-							<username>${db.username}</username>
-							<password>${db.password}</password>
-							<format>xml</format>
-							<type>CLEAN_INSERT</type>
-							<src>../perfiles/${build.profile.id}/sql/data/datos.xml</src>
-						</configuration>
-						<dependencies>
-							<dependency>
-								<groupId>com.h2database</groupId>
-								<artifactId>h2</artifactId>
-								<version>${h2.version}</version>
-							</dependency>
-						</dependencies>
-					</plugin>
- -->										
+						
 					<plugin>
 		                <groupId>org.apache.maven.plugins</groupId>
 		                <artifactId>maven-surefire-plugin</artifactId>
@@ -226,71 +155,70 @@
 		                			<goal>test</goal>
 		                		</goals>
 		                		<configuration>
-		                			<testSourceDirectory>src/acceptance-test/java</testSourceDirectory>		                			 
+			                		<systemProperties>
+				                    	<property>
+				                    		<name>concordion.output.dir</name>
+				                    		<value>target/specs</value>
+				                    	</property>
+				                    </systemProperties>
+		                			<testSourceDirectory>src/test/java</testSourceDirectory>
 		                			<skip>false</skip>
 		                			<skipTests>${skip.acceptance.tests}</skipTests>
 		                			<includes>
-		                				<include>**/*Fixture.java</include>
+		                				<include>**/EspecificacionesFixture.java</include>
 		                			</includes>
 		                			<excludes>
-		                				<exclude>**/IT*.java</exclude>
 		                				<exclude>**/*Test.java</exclude>
-		                			</excludes>		                			
+		                				<exclude>**/IT*.java</exclude>
+		                			</excludes>
 		                		</configuration>
 		                	</execution>                	
+		                </executions>
+            		</plugin>   	
+            		
+            		<plugin>
+		                <groupId>org.apache.maven.plugins</groupId>
+		                <artifactId>maven-jar-plugin</artifactId>
+		                <version>2.4</version>
+		                <executions>
+		                	<!-- Para este perfil no es necesario empaquetar el artefacto jar -->                	
+		                	<execution>
+		                		<id>default-jar</id>
+		                		<phase>none</phase>
+		                	</execution>                	
 		                </executions>                
-            		</plugin>   				
+            		</plugin>	
+            		
+            		<plugin>
+		                <groupId>org.apache.maven.plugins</groupId>
+		                <artifactId>maven-war-plugin</artifactId>
+		                <version>2.1.1</version>
+		                <executions>
+		                	<!-- Para este perfil no es necesario empaquetar el artefacto war -->
+		                	<execution>
+		                		<id>default-war</id>
+		                		<phase>none</phase>
+		                	</execution>
+		                </executions>                
+		            </plugin>				
   				</plugins>
   			</build>
+  			<dependencies>
+				<dependency>
+		            <groupId>org.eclipse.jetty</groupId>
+		            <artifactId>jetty-util</artifactId>
+		            <version>${jetty.version}</version>
+		        </dependency>	
+		        <dependency>
+		            <groupId>org.eclipse.jetty</groupId>
+		            <artifactId>jetty-io</artifactId>
+		            <version>${jetty.version}</version>
+		        </dependency>		    			    
+  			</dependencies>
   		</profile>
   	
  	</profiles> 
-  	
-  	<build>
-  		<plugins>
-  			
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.12</version>
-                <configuration>
-                    <skipTests>${skip.unit.tests}</skipTests>
-                    
-                </configuration>
-                
-                <executions>
-                	
-                	<execution>
-                		<id>acceptance-test</id>
-                		<phase>integration-test</phase>
-                		<goals>
-                			<goal>test</goal>
-                		</goals>
-                		<configuration>
-	                		<systemProperties>
-		                    	<property>
-		                    		<name>concordion.output.dir</name>
-		                    		<value>target/specs</value>
-		                    	</property>
-		                    </systemProperties>
-                			<testSourceDirectory>src/test/java</testSourceDirectory>
-                			<includes>
-                				<include>**/*Fixture.java</include>
-                			</includes>
-                			<excludes>
-                				<exclude>**/*Test.java</exclude>
-                				<exclude>**/*IT.java</exclude>
-                			</excludes>
-                		</configuration>
-                	</execution>
-                </executions>
-                
-            </plugin>
-  		
-  		</plugins>
-  	</build>
-  	
-  	
+  	  	
 	<dependencies>
 		<!-- Test dependencies -->
 	  	<dependency>
@@ -372,7 +300,7 @@
 	                <groupId>org.slf4j</groupId>
 	            </exclusion>
 	        </exclusions>
-  	</dependency>      
+  		</dependency>      
 		<!-- Fin Test dependencies -->
 		
 	    <dependency>
@@ -380,6 +308,7 @@
 	    	<artifactId>orienteering-dtos</artifactId>
 	    	<version>0.0.1-SNAPSHOT</version>
 	    	<scope>test</scope>
-	    </dependency>	    
+	    </dependency>	    	     
+	    
 	</dependencies>  
 </project>
