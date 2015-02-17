@@ -26,6 +26,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import cabanas.garcia.orienteering.ColumnSensingFlatXMLDataSetLoader;
 import cabanas.garcia.orienteering.dtos.club.ClubDto;
+import cabanas.garcia.orienteering.web.controllers.RequestMappings;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -70,7 +71,7 @@ public class ITClubDetalleController {
 		// GIVEN
 		ClubDto clubDtoEsperado = ClubDto.getBuilder().conId(998L).conNombre("Club Escondite Madrid").build();
 		
-		MockHttpServletRequestBuilder peticionGetDetalleClub = get(ClubControllerPaths.DETALLE)
+		MockHttpServletRequestBuilder peticionGetDetalleClub = get(RequestMappings.REQUEST_MAPPING_CLUB_ADMIN + RequestMappings.REQUEST_MAPPING_DETAIL)
 				.contentType(MediaType.TEXT_HTML)
 				.param(ClubController.URL_PARAM_ID_CLUB, String.valueOf(998));				
 		

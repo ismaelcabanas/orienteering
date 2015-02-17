@@ -36,6 +36,7 @@ import com.github.springtestdbunit.assertion.DatabaseAssertionMode;
 import cabanas.garcia.orienteering.ColumnSensingFlatXMLDataSetLoader;
 import cabanas.garcia.orienteering.dtos.club.ClubDto;
 import cabanas.garcia.orienteering.web.ConstantesWebTest;
+import cabanas.garcia.orienteering.web.controllers.RequestMappings;
 import cabanas.garcia.orienteering.web.util.mensaje.MensajeUsuario;
 
 /**
@@ -81,7 +82,7 @@ public class ITClubAltaController {
 	public void la_peticion_de_alta_de_club_deberia_devolver_la_vista_del_listado_de_clubs() throws Exception{
 		
 		// GIVEN
-		MockHttpServletRequestBuilder peticionAltaClub = post(ClubControllerPaths.ALTA)
+		MockHttpServletRequestBuilder peticionAltaClub = post(RequestMappings.REQUEST_MAPPING_CLUB_ADMIN + RequestMappings.REQUEST_MAPPING_ADD)
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.param(ConstantesWebTest.CAMPO_FORM_ALTA_NOMBRE, "testClub");
 		

@@ -26,6 +26,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import cabanas.garcia.orienteering.ColumnSensingFlatXMLDataSetLoader;
 import cabanas.garcia.orienteering.dtos.club.ClubDto;
+import cabanas.garcia.orienteering.web.controllers.RequestMappings;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -68,7 +69,7 @@ public class ITClubVolverController {
 	public void la_peticion_de_volver_en_alta_o_edicion_deberia_devolver_la_vista_de_listado_de_clubs() throws Exception {
 		
 		// GIVEN
-		MockHttpServletRequestBuilder peticionGetVolver = get(ClubControllerPaths.VOLVER)
+		MockHttpServletRequestBuilder peticionGetVolver = get(RequestMappings.REQUEST_MAPPING_CLUB_ADMIN + RequestMappings.REQUEST_MAPPING_BACK)
 				.contentType(MediaType.TEXT_HTML);				
 		
 		// WHEN

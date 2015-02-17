@@ -26,6 +26,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import cabanas.garcia.orienteering.ColumnSensingFlatXMLDataSetLoader;
 import cabanas.garcia.orienteering.dtos.club.ClubForm;
+import cabanas.garcia.orienteering.web.controllers.RequestMappings;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -70,7 +71,7 @@ public class ITClubNuevoController {
 		// GIVEN
 		ClubForm clubFormEsperado = ClubForm.getBuilder().build();
 		
-		MockHttpServletRequestBuilder peticionNuevoClub = get(ClubControllerPaths.NUEVO)
+		MockHttpServletRequestBuilder peticionNuevoClub = get(RequestMappings.REQUEST_MAPPING_CLUB_ADMIN + RequestMappings.REQUEST_MAPPING_NEW)
 				.contentType(MediaType.TEXT_HTML);				
 		
 		// WHEN

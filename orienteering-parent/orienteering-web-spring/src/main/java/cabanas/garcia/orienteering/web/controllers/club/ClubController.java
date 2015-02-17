@@ -16,6 +16,7 @@ import cabanas.garcia.orienteering.dtos.club.ClubDto;
 import cabanas.garcia.orienteering.dtos.club.ClubForm;
 import cabanas.garcia.orienteering.servicios.club.api.ClubServicio;
 import cabanas.garcia.orienteering.servicios.club.exceptions.ClubNoExisteException;
+import cabanas.garcia.orienteering.web.controllers.RequestMappings;
 import cabanas.garcia.orienteering.web.util.mensaje.MensajeUsuario;
 
 /**
@@ -25,6 +26,7 @@ import cabanas.garcia.orienteering.web.util.mensaje.MensajeUsuario;
  *
  */
 @Controller
+@RequestMapping(value=RequestMappings.REQUEST_MAPPING_CLUB_ADMIN)
 public class ClubController {
 
 	/* Definición de vistas */
@@ -79,7 +81,7 @@ public class ClubController {
 	 * @return
 	 * 		La vista a la que se redigirá al usuario
 	 */
-	@RequestMapping(value=ClubControllerPaths.LISTADO, method=RequestMethod.GET)
+	@RequestMapping(value=RequestMappings.REQUEST_MAPPING_LIST, method=RequestMethod.GET)
 	public String getClubs(){
 		
 		return VISTA_ADMIN_CLUBS_LISTADO;
@@ -93,7 +95,7 @@ public class ClubController {
 	 * @return
 	 * 		La vista a la que se redigirá al usuario
 	 */
-	@RequestMapping(value=ClubControllerPaths.NUEVO, method=RequestMethod.GET)	
+	@RequestMapping(value=RequestMappings.REQUEST_MAPPING_NEW, method=RequestMethod.GET)	
 	public String nuevo(HttpServletRequest request){
 		
 		// establezco el formulario en la request
@@ -113,7 +115,7 @@ public class ClubController {
 	 * @return
 	 * 		La vista a la que se redigirá al usuario
 	 */
-	@RequestMapping(value=ClubControllerPaths.ALTA, method=RequestMethod.POST)
+	@RequestMapping(value=RequestMappings.REQUEST_MAPPING_ADD, method=RequestMethod.POST)
 	public String alta(ClubForm clubForm, HttpServletRequest request){
 		
 		// el servicio da de alta el club
@@ -142,7 +144,7 @@ public class ClubController {
 	 * @return
 	 * 		La vista a la que se redigirá al usuario
 	 */
-	@RequestMapping(value=ClubControllerPaths.CANCELAR, method=RequestMethod.GET)
+	@RequestMapping(value=RequestMappings.REQUEST_MAPPING_CANCEL, method=RequestMethod.GET)
 	public String cancelar(HttpServletRequest request){
 		
 		// se establece el mensaje de usuario en la request
@@ -162,7 +164,7 @@ public class ClubController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping(value=ClubControllerPaths.BUSCAR, method=RequestMethod.POST)
+	@RequestMapping(value=RequestMappings.REQUEST_MAPPING_SEARCH, method=RequestMethod.POST)
 	public String buscar(ClubBusquedaForm clubFormBusqueda, 
 			HttpServletRequest request){
 		
@@ -191,7 +193,7 @@ public class ClubController {
 	 * @return
 	 * 		La vista a la que se redigirá al usuario
 	 */
-	@RequestMapping(value=ClubControllerPaths.EDICION, method=RequestMethod.GET)
+	@RequestMapping(value=RequestMappings.REQUEST_MAPPING_EDIT, method=RequestMethod.GET)
 	public String edicion(@RequestParam(value=URL_PARAM_ID_CLUB) Long idClubSeleccionado, HttpServletRequest request) {
 		
 		// recupero los datos del club seleccionado
@@ -226,7 +228,7 @@ public class ClubController {
 	 * @return
 	 * 		La vista a la que se redigirá al usuario
 	 */
-	@RequestMapping(value=ClubControllerPaths.ACTUALIZAR, method=RequestMethod.POST)
+	@RequestMapping(value=RequestMappings.REQUEST_MAPPING_MODIFY, method=RequestMethod.POST)
 	public String actualizar(ClubForm clubForm, HttpServletRequest request) {
 
 		// actualizo el club con la nueva informació	n proporcionada por la instancia ClubForm
@@ -247,7 +249,7 @@ public class ClubController {
 	 * @param request
 	 * @return
 	 */
-	@RequestMapping(value=ClubControllerPaths.DETALLE, method=RequestMethod.GET)
+	@RequestMapping(value=RequestMappings.REQUEST_MAPPING_DETAIL, method=RequestMethod.GET)
 	public String detalle(@RequestParam(value=URL_PARAM_ID_CLUB) Long idClubSeleccionado,
 			HttpServletRequest request) {
 
@@ -273,7 +275,7 @@ public class ClubController {
 	 *
 	 * @return
 	 */
-	@RequestMapping(value=ClubControllerPaths.VOLVER, method=RequestMethod.GET)
+	@RequestMapping(value=RequestMappings.REQUEST_MAPPING_BACK, method=RequestMethod.GET)
 	public String volver() {
 
 		return VISTA_ADMIN_CLUBS_LISTADO;
@@ -287,7 +289,7 @@ public class ClubController {
 	 * 
 	 * @return
 	 */
-	@RequestMapping(value=ClubControllerPaths.BAJA, method=RequestMethod.GET)
+	@RequestMapping(value=RequestMappings.REQUEST_MAPPING_DELETE, method=RequestMethod.GET)
 	public String baja(@RequestParam(value=URL_PARAM_ID_CLUB) Long idClubSeleccionado, HttpServletRequest request) {
 		
 		// doy de baja al club

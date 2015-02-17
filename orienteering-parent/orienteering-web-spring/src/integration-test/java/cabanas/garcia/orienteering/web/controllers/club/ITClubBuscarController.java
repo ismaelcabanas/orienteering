@@ -37,6 +37,7 @@ import cabanas.garcia.orienteering.ColumnSensingFlatXMLDataSetLoader;
 import cabanas.garcia.orienteering.dtos.club.ClubBusquedaForm;
 import cabanas.garcia.orienteering.dtos.club.ClubDto;
 import cabanas.garcia.orienteering.web.ConstantesWebTest;
+import cabanas.garcia.orienteering.web.controllers.RequestMappings;
 import cabanas.garcia.orienteering.web.util.mensaje.MensajeUsuario;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -93,7 +94,7 @@ public class ITClubBuscarController {
 		ClubDto clubEsperado1 = ClubDto.getBuilder().conId(999).conNombre("CLUB 999").build();
 		ClubDto clubEsperado2 = ClubDto.getBuilder().conId(998).conNombre("Club Escondite Madrid").build();
 		
-		MockHttpServletRequestBuilder peticionBuscarClubsPorNombre = post(ClubControllerPaths.BUSCAR)
+		MockHttpServletRequestBuilder peticionBuscarClubsPorNombre = post(RequestMappings.REQUEST_MAPPING_CLUB_ADMIN + RequestMappings.REQUEST_MAPPING_SEARCH)
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)				
 				.param(ConstantesWebTest.CAMPO_FORM_BUSQUEDA_NOMBRE, NOMBRE_CLUB)
 				//.requestAttr(ClubController.REQUEST_ATTRIBUTE_CLUB_BUSQUEDA_FORM, ClubBusquedaForm.getBuilder().build())
@@ -118,7 +119,7 @@ public class ITClubBuscarController {
 	public void cuando_se_realiza_una_busqueda_que_no_devuelve_resultados_deberia_devolver_la_vista_de_listado_de_clubs_e_informar_al_usuario() throws Exception{
 		
 		// GIVEN
-		MockHttpServletRequestBuilder peticionBuscarClubsPorNombre = post(ClubControllerPaths.BUSCAR)
+		MockHttpServletRequestBuilder peticionBuscarClubsPorNombre = post(RequestMappings.REQUEST_MAPPING_CLUB_ADMIN + RequestMappings.REQUEST_MAPPING_SEARCH)
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)				
 				.param(ConstantesWebTest.CAMPO_FORM_BUSQUEDA_NOMBRE, NOMBRE_CLUB_QUE_NO_EXISTE)
 				//.requestAttr(ClubController.REQUEST_ATTRIBUTE_CLUB_BUSQUEDA_FORM, ClubBusquedaForm.getBuilder().build())

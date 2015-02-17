@@ -27,6 +27,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import cabanas.garcia.orienteering.ColumnSensingFlatXMLDataSetLoader;
 import cabanas.garcia.orienteering.dtos.club.ClubForm;
+import cabanas.garcia.orienteering.web.controllers.RequestMappings;
 import cabanas.garcia.orienteering.web.util.mensaje.MensajeUsuario;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -70,7 +71,7 @@ public class ITClubCancelarController {
 	public void la_peticion_de_cancelacion_de_alta_y_o_edicion_de_club_deberia_devolver_la_vista_de_listado_de_clubs() throws Exception {
 		
 		// GIVEN
-		MockHttpServletRequestBuilder peticionCancelacionAltaEdicionClub = get(ClubControllerPaths.CANCELAR)
+		MockHttpServletRequestBuilder peticionCancelacionAltaEdicionClub = get(RequestMappings.REQUEST_MAPPING_CLUB_ADMIN + RequestMappings.REQUEST_MAPPING_CANCEL)
 				.contentType(MediaType.TEXT_HTML);				
 		
 		// WHEN

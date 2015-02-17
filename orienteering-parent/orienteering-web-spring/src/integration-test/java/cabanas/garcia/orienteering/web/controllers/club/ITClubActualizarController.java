@@ -26,6 +26,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import cabanas.garcia.orienteering.ColumnSensingFlatXMLDataSetLoader;
 import cabanas.garcia.orienteering.web.ConstantesWebTest;
+import cabanas.garcia.orienteering.web.controllers.RequestMappings;
 import cabanas.garcia.orienteering.web.util.mensaje.MensajeUsuario;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -72,7 +73,7 @@ public class ITClubActualizarController {
 	public void la_peticion_de_actualizar_club_deberia_redirigir_al_listado_de_clubs() throws Exception{
 		
 		// GIVEN
-		MockHttpServletRequestBuilder peticionActualizarClubsPorNombre = post(ClubControllerPaths.ACTUALIZAR)
+		MockHttpServletRequestBuilder peticionActualizarClubsPorNombre = post(RequestMappings.REQUEST_MAPPING_CLUB_ADMIN + RequestMappings.REQUEST_MAPPING_MODIFY)
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.param(ConstantesWebTest.CAMPO_FORM_ID, ID_CLUB_A_ACTUALIZAR)
 				.param(ConstantesWebTest.CAMPO_FORM_ALTA_NOMBRE, NOMBRE_CLUB);
